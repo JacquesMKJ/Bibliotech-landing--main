@@ -6,8 +6,6 @@
   <title>BiblioTech — Mon Espace Étudiant</title>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="dashboard.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="supabase.js" defer></script>
 </head>
 <body style="visibility:hidden">
 
@@ -46,8 +44,8 @@
       <a href="books.html" class="btn btn-primary">📖 Parcourir</a>
     </div>
   </div>
-
   <div class="content">
+
     <div class="welcome-banner">
       <div class="wb-text">
         <h2 id="welcome-msg">Bonjour 👋</h2>
@@ -59,23 +57,19 @@
     <div class="stats-grid">
       <div class="stat-card sc-blue">
         <div class="sc-top"><span class="sc-label">Mes emprunts</span><span class="sc-icon">📖</span></div>
-        <div class="sc-val">2</div>
-        <div class="sc-sub">livres en ma possession</div>
+        <div class="sc-val">2</div><div class="sc-sub">livres en ma possession</div>
       </div>
       <div class="stat-card sc-accent">
         <div class="sc-top"><span class="sc-label">Limite restante</span><span class="sc-icon">⚡</span></div>
-        <div class="sc-val">1</div>
-        <div class="sc-sub">emprunt encore possible</div>
+        <div class="sc-val">1</div><div class="sc-sub">emprunt encore possible</div>
       </div>
       <div class="stat-card sc-green">
         <div class="sc-top"><span class="sc-label">Livres disponibles</span><span class="sc-icon">✅</span></div>
-        <div class="sc-val">17</div>
-        <div class="sc-sub">dans le catalogue</div>
+        <div class="sc-val">17</div><div class="sc-sub">dans le catalogue</div>
       </div>
       <div class="stat-card sc-amber">
         <div class="sc-top"><span class="sc-label">Total emprunté</span><span class="sc-icon">📊</span></div>
-        <div class="sc-val">8</div>
-        <div class="sc-sub">depuis mon inscription</div>
+        <div class="sc-val">8</div><div class="sc-sub">depuis mon inscription</div>
       </div>
     </div>
 
@@ -86,58 +80,42 @@
       </div>
       <div class="panel-body">
         <div class="prog-wrap">
-          <div class="prog-label">
-            <span>Capacité utilisée</span>
-            <span style="color:var(--amber); font-weight:600;">2 sur 3 livres maximum</span>
-          </div>
-          <div class="prog-bar" style="height:8px; border-radius:6px;">
-            <div class="prog-fill amber" style="width:66%; height:8px; border-radius:6px;"></div>
+          <div class="prog-label"><span>Capacité utilisée</span><span style="color:var(--amber);font-weight:600;">2 sur 3 livres maximum</span></div>
+          <div class="prog-bar" style="height:8px;border-radius:6px;">
+            <div class="prog-fill amber" style="width:66%;height:8px;border-radius:6px;"></div>
           </div>
         </div>
-        <p style="font-size:.75rem; color:var(--dim); margin-top:10px;">
-          ⚠️ Il vous reste <strong style="color:var(--text);">1 emprunt possible</strong>. Retournez un livre pour en emprunter un autre si nécessaire.
-        </p>
+        <p style="font-size:.75rem;color:var(--dim);margin-top:10px;">⚠️ Il vous reste <strong style="color:var(--text);">1 emprunt possible</strong>.</p>
       </div>
     </div>
 
     <div class="two-col">
       <div class="panel">
-        <div class="panel-head">
-          <div class="panel-title">Mes emprunts en cours</div>
-        </div>
+        <div class="panel-head"><div class="panel-title">Mes emprunts en cours</div></div>
         <div class="panel-body">
           <div class="borrow-row">
-            <div class="br-info"><h4>Les Misérables</h4><p>Victor Hugo · emprunté le 10 fév.</p></div>
+            <div class="br-info"><h4>Les Misérables</h4><p>Victor Hugo · 10 fév.</p></div>
             <span class="badge b-amber">Actif</span>
           </div>
           <div class="borrow-row">
-            <div class="br-info"><h4>L'Étranger</h4><p>Albert Camus · emprunté le 15 fév.</p></div>
+            <div class="br-info"><h4>L'Étranger</h4><p>Albert Camus · 15 fév.</p></div>
             <span class="badge b-amber">Actif</span>
           </div>
-          <div style="text-align:center; padding:12px 0 4px;">
+          <div style="text-align:center;padding:12px 0 4px;">
             <a href="books.html" class="btn btn-primary btn-sm">➕ Emprunter un livre</a>
           </div>
         </div>
       </div>
-
       <div class="panel">
-        <div class="panel-head">
-          <div class="panel-title">⚠️ Mes alertes</div>
-        </div>
+        <div class="panel-head"><div class="panel-title">⚠️ Mes alertes</div></div>
         <div class="panel-body">
           <div class="alert-row">
             <div class="alert-dot amber"></div>
-            <div class="alert-info">
-              <h4>Limite bientôt atteinte</h4>
-              <p>Vous avez emprunté 2 livres sur 3 autorisés.</p>
-            </div>
+            <div class="alert-info"><h4>Limite bientôt atteinte</h4><p>2 livres sur 3 empruntés.</p></div>
           </div>
           <div class="alert-row">
             <div class="alert-dot amber"></div>
-            <div class="alert-info">
-              <h4>Emprunt long — Les Misérables</h4>
-              <p>Emprunté depuis plus de 28 jours.</p>
-            </div>
+            <div class="alert-info"><h4>Emprunt long — Les Misérables</h4><p>Emprunté depuis plus de 28 jours.</p></div>
           </div>
         </div>
       </div>
@@ -146,9 +124,41 @@
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  document.getElementById('today-date').textContent =
-    new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' })
+  const SUPABASE_URL = 'https://tpyjpobheliuqkkriuod.supabase.co'
+  const SUPABASE_KEY = 'sb_publishable_wCTVTGyYstnDSLmJh-lFjA_ORruAhnm'
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+
+  async function handleLogout() {
+    await sb.auth.signOut()
+    window.location.href = 'auth.html'
+  }
+
+  async function init() {
+    const { data: { session } } = await sb.auth.getSession()
+    if (!session) { window.location.href = 'auth.html'; return }
+
+    const user = session.user
+    const role = user.user_metadata?.role || 'student'
+    if (role !== 'student') {
+      window.location.href = role === 'admin' ? 'dashboard-admin.html' : 'dashboard-teacher.html'
+      return
+    }
+
+    const fullName  = (user.user_metadata?.full_name || user.email.split('@')[0]).trim()
+    const firstName = user.user_metadata?.first_name || fullName.split(' ')[0]
+    const initials  = fullName.split(' ').filter(Boolean).map(n => n[0]).join('').toUpperCase().slice(0, 2)
+
+    document.getElementById('user-name').textContent   = fullName
+    document.getElementById('user-email').textContent  = user.email
+    document.getElementById('user-avatar').textContent = initials
+    document.getElementById('welcome-msg').textContent = `Bonjour, ${firstName} 👋`
+    document.getElementById('today-date').textContent  =
+      new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' })
+
+    document.body.style.visibility = 'visible'
+  }
 
   const cursor = document.getElementById('cursor')
   document.addEventListener('mousemove', e => {
@@ -160,9 +170,7 @@
     el.addEventListener('mouseleave', () => cursor.classList.remove('big'))
   })
 
-  requireRole('student', {
-    onSuccess: () => { document.body.style.visibility = 'visible' }
-  })
+  init()
 </script>
 </body>
 </html>

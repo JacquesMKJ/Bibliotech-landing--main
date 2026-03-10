@@ -6,8 +6,6 @@
   <title>BiblioTech — Dashboard Admin</title>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="dashboard.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-  <script src="supabase.js" defer></script>
 </head>
 <body style="visibility:hidden">
 
@@ -47,8 +45,8 @@
       <span class="topbar-date" id="today-date"></span>
     </div>
   </div>
-
   <div class="content">
+
     <div class="welcome-banner">
       <div class="wb-text">
         <h2 id="welcome-msg">Bonjour 👋</h2>
@@ -60,23 +58,19 @@
     <div class="stats-grid">
       <div class="stat-card sc-accent">
         <div class="sc-top"><span class="sc-label">Total Livres</span><span class="sc-icon">📚</span></div>
-        <div class="sc-val">24</div>
-        <div class="sc-sub">dans le catalogue</div>
+        <div class="sc-val">24</div><div class="sc-sub">dans le catalogue</div>
       </div>
       <div class="stat-card sc-green">
         <div class="sc-top"><span class="sc-label">Disponibles</span><span class="sc-icon">✅</span></div>
-        <div class="sc-val">17</div>
-        <div class="sc-sub">prêts à emprunter</div>
+        <div class="sc-val">17</div><div class="sc-sub">prêts à emprunter</div>
       </div>
       <div class="stat-card sc-blue">
         <div class="sc-top"><span class="sc-label">Membres</span><span class="sc-icon">👥</span></div>
-        <div class="sc-val">12</div>
-        <div class="sc-sub">8 étudiants · 4 enseignants</div>
+        <div class="sc-val">12</div><div class="sc-sub">8 étudiants · 4 enseignants</div>
       </div>
       <div class="stat-card sc-amber">
         <div class="sc-top"><span class="sc-label">Emprunts actifs</span><span class="sc-icon">🔄</span></div>
-        <div class="sc-val">7</div>
-        <div class="sc-sub">en circulation</div>
+        <div class="sc-val">7</div><div class="sc-sub">en circulation</div>
       </div>
     </div>
 
@@ -137,11 +131,10 @@
           </div>
           <div class="alert-row">
             <div class="alert-dot amber"></div>
-            <div class="alert-info"><h4>Thomas Bernard — 2 livres empruntés</h4><p>Approche la limite · encore 1 emprunt possible</p></div>
+            <div class="alert-info"><h4>Thomas Bernard — 2 livres empruntés</h4><p>Encore 1 emprunt possible</p></div>
           </div>
         </div>
       </div>
-
       <div class="panel">
         <div class="panel-head">
           <div class="panel-title">Membres actifs</div>
@@ -173,12 +166,47 @@
   </div>
 </div>
 
+<!-- ① SDK Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- ② Helpers auth + init dashboard -->
 <script>
-  // Date
-  document.getElementById('today-date').textContent =
-    new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' })
+  // ── SUPABASE ──
+  const SUPABASE_URL = 'https://tpyjpobheliuqkkriuod.supabase.co'
+  const SUPABASE_KEY = 'sb_publishable_wCTVTGyYstnDSLmJh-lFjA_ORruAhnm'
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
 
-  // Cursor
+  async function handleLogout() {
+    await sb.auth.signOut()
+    window.location.href = 'auth.html'
+  }
+
+  // ── INIT ──
+  async function init() {
+    const { data: { session } } = await sb.auth.getSession()
+    if (!session) { window.location.href = 'auth.html'; return }
+
+    const user = session.user
+    const role = user.user_metadata?.role || 'student'
+    if (role !== 'admin') {
+      window.location.href = role === 'teacher' ? 'dashboard-teacher.html' : 'dashboard-student.html'
+      return
+    }
+
+    const fullName  = (user.user_metadata?.full_name || user.email.split('@')[0]).trim()
+    const firstName = user.user_metadata?.first_name || fullName.split(' ')[0]
+    const initials  = fullName.split(' ').filter(Boolean).map(n => n[0]).join('').toUpperCase().slice(0, 2)
+
+    document.getElementById('user-name').textContent   = fullName
+    document.getElementById('user-email').textContent  = user.email
+    document.getElementById('user-avatar').textContent = initials
+    document.getElementById('welcome-msg').textContent = `Bonjour, ${firstName} 👋`
+    document.getElementById('today-date').textContent  =
+      new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' })
+
+    document.body.style.visibility = 'visible'
+  }
+
+  // ── CURSOR ──
   const cursor = document.getElementById('cursor')
   document.addEventListener('mousemove', e => {
     cursor.style.left = e.clientX + 'px'
@@ -189,10 +217,7 @@
     el.addEventListener('mouseleave', () => cursor.classList.remove('big'))
   })
 
-  // Auth — affiche la page seulement si connecté avec le bon rôle
-  requireRole('admin', {
-    onSuccess: () => { document.body.style.visibility = 'visible' }
-  })
+  init()
 </script>
 </body>
 </html>
