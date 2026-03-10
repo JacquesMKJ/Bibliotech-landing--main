@@ -1,13 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BIBLIOTECH LANDING</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BiblioTech — Gestion de Bibliothèque</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    
-    <div class="cursor" id="cursor"></div>
+
+  <div class="cursor" id="cursor"></div>
+
+  <!-- ── NAV ── -->
   <nav>
     <a href="index.html" class="nav-logo">
       <span class="nav-logo-dot"></span>
@@ -19,5 +23,181 @@
       <li><a href="auth.html" class="nav-cta">Connexion</a></li>
     </ul>
   </nav>
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-tag">
+        <span class="hero-tag-dot"></span>
+        Système de gestion · v1.0
+      </div>
+      <h1 class="hero-h1">
+        La bibliothèque
+        <em>moderne</em>
+        <span class="line2">commence ici.</span>
+      </h1>
+      <p class="hero-p">
+        BiblioTech centralise la gestion de vos livres, membres et emprunts
+        en un seul endroit. Simple, rapide, et conçu pour les bibliothèques d'aujourd'hui.
+      </p>
+      <div class="hero-actions">
+        <a href="auth.html?tab=register" class="btn-hero btn-hero-primary">
+          Commencer gratuitement <span class="arrow">→</span>
+        </a>
+        <a href="auth.html?tab=login" class="btn-hero btn-hero-ghost">
+          Se connecter
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="hs-item">
+          <div class="hs-val">100%</div>
+          <div class="hs-label">En ligne</div>
+        </div>
+        <div class="hs-item">
+          <div class="hs-val">2 rôles</div>
+          <div class="hs-label">Étudiant / Enseignant</div>
+        </div>
+        <div class="hs-item">
+          <div class="hs-val">Temps réel</div>
+          <div class="hs-label">Supabase</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── HERO VISUAL ── -->
+    <div class="hero-right">
+      <div class="hero-right-bg"></div>
+      <div class="grid-lines"></div>
+      <div class="hero-visual">
+        <div class="hv-card">
+          <div class="hv-card-top">
+            <span class="hv-label">Livre récent</span>
+            <span class="hv-badge ok">● Disponible</span>
+          </div>
+          <div class="hv-title">Le Petit Prince</div>
+          <div class="hv-sub">Antoine de Saint-Exupéry</div>
+        </div>
+        <div class="hv-card">
+          <div class="hv-card-top">
+            <span class="hv-label">Emprunt actif</span>
+            <span class="hv-badge out">● En cours</span>
+          </div>
+          <div class="hv-title">Les Misérables</div>
+          <div class="hv-sub">Sophie M. · depuis le 10 fév.</div>
+        </div>
+        <div class="hv-card">
+          <div class="hv-card-top">
+            <span class="hv-label">Tableau de bord</span>
+          </div>
+          <div class="hv-row">
+            <span class="hv-stat-label">Livres disponibles</span>
+            <span class="hv-stat-val">24</span>
+          </div>
+          <div class="hv-row">
+            <span class="hv-stat-label">Membres actifs</span>
+            <span class="hv-stat-val">12</span>
+          </div>
+          <div class="hv-row">
+            <span class="hv-stat-label">Emprunts ce mois</span>
+            <span class="hv-stat-val">38</span>
+          </div>
+          <div class="hv-bar-wrap">
+            <div class="hv-bar"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FEATURES ── -->
+  <section class="features" id="features">
+    <div class="features-header">
+      <div class="features-sup">Ce que nous offrons</div>
+      <h2 class="features-title">Tout ce dont vous avez besoin</h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="fc-icon">📖</div>
+        <div class="fc-title">Catalogue de livres</div>
+        <div class="fc-desc">Gérez votre collection complète avec les statuts de disponibilité mis à jour en temps réel.</div>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon">👥</div>
+        <div class="fc-title">Gestion des membres</div>
+        <div class="fc-desc">Étudiants (3 livres max) et enseignants (10 livres max) avec suivi des emprunts personnalisé.</div>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon">🔄</div>
+        <div class="fc-title">Emprunts & Retours</div>
+        <div class="fc-desc">Enregistrez les emprunts et retours instantanément avec validation des limites automatique.</div>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon">📊</div>
+        <div class="fc-title">Tableau de bord</div>
+        <div class="fc-desc">Visualisez l'activité de votre bibliothèque avec des statistiques claires et actualisées.</div>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon">✍️</div>
+        <div class="fc-title">Gestion des auteurs</div>
+        <div class="fc-desc">Associez chaque livre à son auteur et retrouvez facilement tout le catalogue par auteur.</div>
+      </div>
+      <div class="feature-card">
+        <div class="fc-icon">⚡</div>
+        <div class="fc-title">Synchronisation Supabase</div>
+        <div class="fc-desc">Toutes les données sont sauvegardées et synchronisées en temps réel grâce à Supabase.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA BANNER ── -->
+  <div class="cta-banner" id="about">
+    <div class="cta-left">
+      <div class="cta-title">Prêt à moderniser<br>votre bibliothèque ?</div>
+      <div class="cta-sub">Créez votre compte en moins d'une minute et commencez à gérer vos livres dès aujourd'hui.</div>
+    </div>
+    <div class="cta-right">
+      <a href="auth.html?tab=register" class="btn-hero btn-hero-primary">
+        Créer un compte <span class="arrow">→</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <div class="footer-logo">📚 BiblioTech</div>
+    <div class="footer-copy">© 2026 BiblioTech · Système de Gestion de Bibliothèque</div>
+  </footer>
+
+  <!--
+  <script>
+    // Custom cursor
+    const cursor = document.getElementById('cursor');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top  = e.clientY + 'px';
+    });
+    document.querySelectorAll('a, button, .feature-card, .hv-card').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+    });
+
+    // Scroll animations
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.feature-card, .hv-card').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = 'opacity .5s ease, transform .5s ease';
+      observer.observe(el);
+    });
+  </script>  -->
+
 </body>
 </html>
