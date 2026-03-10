@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BiblioTech — Mon Espace Étudiant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<!-- ════════ SIDEBAR ════════ -->
+<aside class="sidebar">
+  <a href="index.html" class="sb-logo">
+    <div class="sb-logo-icon">📚</div>
+    <div class="sb-logo-name">BiblioTech</div>
+  </a>
+
+  <div class="sb-role-badge role-student">🎓 Étudiant</div>
+
+  <nav class="sb-nav">
+    <div class="sb-section">Mon espace</div>
+    <a href="dashboard-student.html" class="sb-link active">
+      <span class="si">🏠</span> Tableau de bord
+    </a>
+    <a href="my-borrowings.html" class="sb-link">
+      <span class="si">🔄</span> Mes emprunts
+      <span class="sb-badge">2</span>
+    </a>
+    <div class="sb-section">Catalogue</div>
+    <a href="books.html" class="sb-link">
+      <span class="si">📖</span> Parcourir les livres
+    </a>
+  </nav>
+
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar" style="background:var(--blue);">SM</div>
+      <div>
+        <div class="sb-user-name">Sophie Martin</div>
+        <div class="sb-user-role">sophie.martin@edu.fr</div>
+      </div>
+    </div>
+    <button class="sb-logout" onclick="window.location.href='auth.html'">
+      🚪 Déconnexion
+    </button>
+  </div>
+</aside>
+
+<!-- ════════ MAIN ════════ -->
+<div class="main">
+
+  <div class="topbar">
+    <div class="topbar-title">Mon tableau de bord</div>
+    <div class="topbar-right">
+      <span class="topbar-date" id="today-date"></span>
+      <a href="books.html" class="btn btn-primary">📖 Parcourir</a>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- WELCOME -->
+    <div class="welcome-banner">
+      <div class="wb-text">
+        <h2>Bonjour, Sophie 👋</h2>
+        <p>Bienvenue dans votre espace étudiant. Vous pouvez emprunter jusqu'à 3 livres.</p>
+      </div>
+      <div class="wb-icon">🎓</div>
+    </div>
+
+    <!-- STATS ÉTUDIANT -->
+    <div class="stats-grid">
+      <div class="stat-card sc-blue">
+        <div class="sc-top">
+          <span class="sc-label">Mes emprunts</span>
+          <span class="sc-icon">📖</span>
+        </div>
+        <div class="sc-val">2</div>
+        <div class="sc-sub">livres en ma possession</div>
+      </div>
+      <div class="stat-card sc-accent">
+        <div class="sc-top">
+          <span class="sc-label">Limite restante</span>
+          <span class="sc-icon">⚡</span>
+        </div>
+        <div class="sc-val">1</div>
+        <div class="sc-sub">emprunt encore possible</div>
+      </div>
+      <div class="stat-card sc-green">
+        <div class="sc-top">
+          <span class="sc-label">Livres disponibles</span>
+          <span class="sc-icon">✅</span>
+        </div>
+        <div class="sc-val">17</div>
+        <div class="sc-sub">dans le catalogue</div>
+      </div>
+      <div class="stat-card sc-amber">
+        <div class="sc-top">
+          <span class="sc-label">Total emprunté</span>
+          <span class="sc-icon">📊</span>
+        </div>
+        <div class="sc-val">8</div>
+        <div class="sc-sub">depuis mon inscription</div>
+      </div>
+    </div>
+
+    <!-- LIMITE BAR -->
+    <div class="panel" style="margin-bottom:24px;">
+      <div class="panel-head">
+        <div class="panel-title">Ma limite d'emprunt</div>
+        <span class="badge b-amber">2 / 3 utilisés</span>
+      </div>
+      <div class="panel-body">
+        <div class="prog-wrap">
+          <div class="prog-label">
+            <span>Capacité utilisée</span>
+            <span style="color:var(--amber); font-weight:600;">2 sur 3 livres maximum</span>
+          </div>
+          <div class="prog-bar" style="height:8px; border-radius:6px;">
+            <div class="prog-fill amber" style="width:66%; height:8px; border-radius:6px;"></div>
+          </div>
+        </div>
+        <p style="font-size:.75rem; color:var(--dim); margin-top:10px;">
+          ⚠️ Il vous reste <strong style="color:var(--text);">1 emprunt possible</strong>. Retournez un livre pour en emprunter un autre si nécessaire.
+        </p>
+      </div>
+    </div>
+
+    <div class="two-col">
+
+      <!-- MES EMPRUNTS EN COURS -->
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Mes emprunts en cours</div>
+          <a href="my-borrowings.html" class="btn btn-ghost btn-sm">Voir tout</a>
+        </div>
+        <div class="panel-body">
+          <div class="borrow-row">
+            <div class="br-info">
+              <h4>Les Misérables</h4>
+              <p>Victor Hugo · emprunté le 10 fév.</p>
+            </div>
+            <div class="br-right">
+              <span class="badge b-amber">Actif</span>
+            </div>
+          </div>
+          <div class="borrow-row">
+            <div class="br-info">
+              <h4>L'Étranger</h4>
+              <p>Albert Camus · emprunté le 15 fév.</p>
+            </div>
+            <div class="br-right">
+              <span class="badge b-amber">Actif</span>
+            </div>
+          </div>
+          <div style="text-align:center; padding:12px 0 4px;">
+            <a href="books.html" class="btn btn-primary btn-sm">➕ Emprunter un livre</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- LIVRES DISPONIBLES -->
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Livres disponibles</div>
+          <a href="books.html" class="btn btn-ghost btn-sm">Tout voir</a>
+        </div>
+        <div class="panel-body">
+          <div class="book-row">
+            <div class="book-num">📖</div>
+            <div class="book-info" style="flex:1">
+              <h4>Le Petit Prince</h4>
+              <p>Antoine de Saint-Exupéry</p>
+            </div>
+            <span class="badge b-green">Dispo</span>
+          </div>
+          <div class="book-row">
+            <div class="book-num">📖</div>
+            <div class="book-info" style="flex:1">
+              <h4>Notre-Dame de Paris</h4>
+              <p>Victor Hugo</p>
+            </div>
+            <span class="badge b-green">Dispo</span>
+          </div>
+          <div class="book-row">
+            <div class="book-num">📖</div>
+            <div class="book-info" style="flex:1">
+              <h4>Le Deuxième Sexe</h4>
+              <p>Simone de Beauvoir</p>
+            </div>
+            <span class="badge b-green">Dispo</span>
+          </div>
+          <div class="book-row">
+            <div class="book-num">📖</div>
+            <div class="book-info" style="flex:1">
+              <h4>Vol de nuit</h4>
+              <p>Antoine de Saint-Exupéry</p>
+            </div>
+            <span class="badge b-green">Dispo</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ALERTES -->
+    <div class="panel">
+      <div class="panel-head">
+        <div class="panel-title">⚠️ Mes alertes</div>
+      </div>
+      <div class="panel-body">
+        <div class="alert-row">
+          <div class="alert-dot amber"></div>
+          <div class="alert-info">
+            <h4>Limite bientôt atteinte</h4>
+            <p>Vous avez emprunté 2 livres sur 3 autorisés. Plus qu'1 emprunt possible.</p>
+          </div>
+        </div>
+        <div class="alert-row">
+          <div class="alert-dot amber"></div>
+          <div class="alert-info">
+            <h4>Emprunt long — Les Misérables</h4>
+            <p>Emprunté depuis plus de 28 jours. Pensez à le retourner si vous avez terminé.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top  = e.clientY + 'px';
+  });
+  document.querySelectorAll('a, button, .stat-card').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+  });
+
+  const d = new Date();
+  document.getElementById('today-date').textContent =
+    d.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+</script>
+</body>
+</html>
