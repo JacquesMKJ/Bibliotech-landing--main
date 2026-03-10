@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BiblioTech — Connexion</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="auth.css">
+</head>
+<body class="auth-body">
+
+  <div class="cursor" id="cursor"></div>
+  <div class="toasts" id="toasts"></div>
+
+  <div class="auth-bg"></div>
+  <div class="auth-grid"></div>
+
+  <div class="auth-wrap">
+    <div class="auth-box">
+
+      <!-- LOGO -->
+      <div class="auth-logo">
+        <div class="auth-logo-icon">📚</div>
+        <div class="auth-logo-name">BiblioTech</div>
+      </div>
+
+      <!-- TABS -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Connexion</button>
+        <button class="auth-tab" id="tab-register" onclick="switchTab('register')">Inscription</button>
+      </div>
+
+      <!-- ── LOGIN FORM ── -->
+      <form class="auth-form" id="form-login" onsubmit="handleLogin(event)">
+        <div class="fg">
+          <label>Adresse email</label>
+          <input type="email" id="login-email" placeholder="vous@email.com" required>
+        </div>
+        <div class="fg">
+          <label>Mot de passe</label>
+          <input type="password" id="login-password" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="auth-btn">
+          Se connecter <span>→</span>
+        </button>
+        <div class="auth-divider"><span>ou</span></div>
+        <p class="auth-switch">
+          Pas encore de compte ?
+          <button type="button" onclick="switchTab('register')">S'inscrire</button>
+        </p>
+      </form>
+
+      <!-- ── REGISTER FORM ── -->
+      <form class="auth-form hidden" id="form-register" onsubmit="handleRegister(event)">
+        <div class="auth-form-row">
+          <div class="fg">
+            <label>Prénom</label>
+            <input type="text" id="reg-first" placeholder="Marie" required>
+          </div>
+          <div class="fg">
+            <label>Nom</label>
+            <input type="text" id="reg-last" placeholder="Dupont" required>
+          </div>
+        </div>
+        <div class="fg">
+          <label>Adresse email</label>
+          <input type="email" id="reg-email" placeholder="vous@email.com" required>
+        </div>
+        <div class="fg">
+          <label>Rôle</label>
+          <div class="role-select">
+            <label class="role-opt selected" id="role-student">
+              <input type="radio" name="role" value="student" checked>
+              <span class="role-icon">🎓</span>
+              <div>
+                <div class="role-name">Étudiant</div>
+                <div class="role-desc">Max 3 livres</div>
+              </div>
+            </label>
+            <label class="role-opt" id="role-teacher">
+              <input type="radio" name="role" value="teacher">
+              <span class="role-icon">🏫</span>
+              <div>
+                <div class="role-name">Enseignant</div>
+                <div class="role-desc">Max 10 livres</div>
+              </div>
+            </label>
+          </div>
+        </div>
+        <div class="fg">
+          <label>Mot de passe</label>
+          <input type="password" id="reg-password" placeholder="Minimum 6 caractères" required minlength="6">
+        </div>
+        <button type="submit" class="auth-btn">
+          Créer mon compte <span>→</span>
+        </button>
+        <p class="auth-switch mt16">
+          Déjà inscrit ?
+          <button type="button" onclick="switchTab('login')">Se connecter</button>
+        </p>
+      </form>
+
+      <!-- BACK LINK -->
+      <a href="index.html" class="auth-back">← Retour à l'accueil</a>
+
+    </div>
+  </div>
+
+  <script>
+    // ── CURSOR ──
+    const cursor = document.getElementById('cursor');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top  = e.clientY + 'px';
+    });
+    document.querySelectorAll('button, a, .role-opt').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('big'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
+    });
+
+    // ── AUTO TAB depuis URL (?tab=register) ──
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('tab') === 'register') switchTab('register');
+
+    // ── TABS ──
+    function switchTab(tab) {
+      document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+      document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+      document.getElementById('form-login').classList.toggle('hidden', tab !== 'login');
+      document.getElementById('form-register').classList.toggle('hidden', tab !== 'register');
+    }
+
+    // ── ROLE SELECTION ──
+    document.querySelectorAll('.role-opt input').forEach(radio => {
+      radio.addEventListener('change', () => {
+        document.querySelectorAll('.role-opt').forEach(o => o.classList.remove('selected'));
+        radio.closest('.role-opt').classList.add('selected');
+      });
+    });
+
+    // ── LOGIN ──
+    function handleLogin(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('.auth-btn');
+      btn.textContent = 'Connexion...';
+      btn.disabled = true;
+      setTimeout(() => {
+        toast('✅ Connexion réussie ! Redirection...', 'ok');
+        setTimeout(() => {
+          window.location.href = 'dashboard.html'; // → vers le dashboard
+        }, 1200);
+      }, 1000);
+    }
+
+    // ── REGISTER ──
+    function handleRegister(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('.auth-btn');
+      btn.textContent = 'Création du compte...';
+      btn.disabled = true;
+      setTimeout(() => {
+        toast('🎉 Compte créé avec succès !', 'ok');
+        setTimeout(() => {
+          switchTab('login');
+          btn.innerHTML = 'Créer mon compte <span>→</span>';
+          btn.disabled = false;
+        }, 1500);
+      }, 1000);
+    }
+
+    // ── TOAST ──
+    function toast(msg, type = 'info') {
+      const c = document.getElementById('toasts');
+      const t = document.createElement('div');
+      t.className = `toast ${type}`;
+      t.textContent = msg;
+      c.appendChild(t);
+      setTimeout(() => {
+        t.style.opacity = '0';
+        t.style.transform = 'translateX(30px)';
+        t.style.transition = '.3s';
+        setTimeout(() => t.remove(), 300);
+      }, 3000);
+    }
+  </script>
+
+</body>
+</html>

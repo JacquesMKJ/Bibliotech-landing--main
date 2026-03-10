@@ -9,8 +9,6 @@
 </head>
 <body>
 
-  <div class="cursor" id="cursor"></div>
-
   <!-- ── NAV ── -->
   <nav>
     <a href="index.html" class="nav-logo">
@@ -29,7 +27,7 @@
     <div class="hero-left">
       <div class="hero-tag">
         <span class="hero-tag-dot"></span>
-        Système de gestion · v1.0
+        Système de gestion de bibliothèque
       </div>
       <h1 class="hero-h1">
         La bibliothèque
@@ -167,37 +165,6 @@
     <div class="footer-logo">📚 BiblioTech</div>
     <div class="footer-copy">© 2026 BiblioTech · Système de Gestion de Bibliothèque</div>
   </footer>
-
-  <!--
-  <script>
-    // Custom cursor
-    const cursor = document.getElementById('cursor');
-    document.addEventListener('mousemove', e => {
-      cursor.style.left = e.clientX + 'px';
-      cursor.style.top  = e.clientY + 'px';
-    });
-    document.querySelectorAll('a, button, .feature-card, .hv-card').forEach(el => {
-      el.addEventListener('mouseenter', () => cursor.classList.add('big'));
-      el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
-    });
-
-    // Scroll animations
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.style.opacity = '1';
-          e.target.style.transform = 'translateY(0)';
-        }
-      });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('.feature-card, .hv-card').forEach(el => {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(20px)';
-      el.style.transition = 'opacity .5s ease, transform .5s ease';
-      observer.observe(el);
-    });
-  </script>  -->
 
 </body>
 </html>
