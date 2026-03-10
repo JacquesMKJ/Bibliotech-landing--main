@@ -7,6 +7,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,300;1,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="auth.css">
+
+  <!-- ✅ Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="auth-body">
 
@@ -41,7 +44,7 @@
           <label>Mot de passe</label>
           <input type="password" id="login-password" placeholder="••••••••" required>
         </div>
-        <button type="submit" class="auth-btn">
+        <button type="submit" class="auth-btn" id="btn-login">
           Se connecter <span>→</span>
         </button>
         <div class="auth-divider"><span>ou</span></div>
@@ -92,96 +95,178 @@
           <label>Mot de passe</label>
           <input type="password" id="reg-password" placeholder="Minimum 6 caractères" required minlength="6">
         </div>
-        <button type="submit" class="auth-btn">
+        <button type="submit" class="auth-btn" id="btn-register">
           Créer mon compte <span>→</span>
         </button>
-        <p class="auth-switch mt16">
+        <p class="auth-switch" style="margin-top:16px;">
           Déjà inscrit ?
           <button type="button" onclick="switchTab('login')">Se connecter</button>
         </p>
       </form>
 
-      <!-- BACK LINK -->
+      <!-- BACK -->
       <a href="index.html" class="auth-back">← Retour à l'accueil</a>
 
     </div>
   </div>
 
   <script>
-    // ── CURSOR ──
-    const cursor = document.getElementById('cursor');
-    document.addEventListener('mousemove', e => {
-      cursor.style.left = e.clientX + 'px';
-      cursor.style.top  = e.clientY + 'px';
-    });
-    document.querySelectorAll('button, a, .role-opt').forEach(el => {
-      el.addEventListener('mouseenter', () => cursor.classList.add('big'));
-      el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
-    });
+    // ══════════════════════════════
+    //  CONFIG SUPABASE
+    // ══════════════════════════════
+    const SUPABASE_URL = 'https://tpyjpobheliuqkkriuod.supabase.co'
+    const SUPABASE_KEY = 'sb_publishable_wCTVTGyYstnDSLmJh-lFjA_ORruAhnm'
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
 
-    // ── AUTO TAB depuis URL (?tab=register) ──
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('tab') === 'register') switchTab('register');
+    // ══════════════════════════════
+    //  VÉRIFIER SI DÉJÀ CONNECTÉ
+    // ══════════════════════════════
+    sb.auth.getSession().then(({ data: { session } }) => {
+      if (session) redirectByRole(session.user)
+    })
 
-    // ── TABS ──
-    function switchTab(tab) {
-      document.getElementById('tab-login').classList.toggle('active', tab === 'login');
-      document.getElementById('tab-register').classList.toggle('active', tab === 'register');
-      document.getElementById('form-login').classList.toggle('hidden', tab !== 'login');
-      document.getElementById('form-register').classList.toggle('hidden', tab !== 'register');
+    // ══════════════════════════════
+    //  REDIRECTION SELON RÔLE
+    // ══════════════════════════════
+    function redirectByRole(user) {
+      const role = user.user_metadata?.role || 'student'
+      if (role === 'admin')        window.location.href = 'dashboard-admin.html'
+      else if (role === 'teacher') window.location.href = 'dashboard-teacher.html'
+      else                         window.location.href = 'dashboard-student.html'
     }
 
-    // ── ROLE SELECTION ──
+    // ══════════════════════════════
+    //  CONNEXION
+    // ══════════════════════════════
+    async function handleLogin(e) {
+      e.preventDefault()
+      const btn   = document.getElementById('btn-login')
+      const email = document.getElementById('login-email').value.trim()
+      const pass  = document.getElementById('login-password').value
+
+      btn.textContent = 'Connexion...'
+      btn.disabled = true
+
+      const { data, error } = await sb.auth.signInWithPassword({ email, password: pass })
+
+      if (error) {
+        toast('❌ ' + traductionErreur(error.message), 'err')
+        btn.innerHTML = 'Se connecter <span>→</span>'
+        btn.disabled = false
+        return
+      }
+
+      toast('✅ Connexion réussie ! Redirection...', 'ok')
+      setTimeout(() => redirectByRole(data.user), 1000)
+    }
+
+    // ══════════════════════════════
+    //  INSCRIPTION
+    // ══════════════════════════════
+    async function handleRegister(e) {
+      e.preventDefault()
+      const btn       = document.getElementById('btn-register')
+      const firstName = document.getElementById('reg-first').value.trim()
+      const lastName  = document.getElementById('reg-last').value.trim()
+      const email     = document.getElementById('reg-email').value.trim()
+      const password  = document.getElementById('reg-password').value
+      const role      = document.querySelector('input[name="role"]:checked').value
+
+      btn.textContent = 'Création du compte...'
+      btn.disabled = true
+
+      const { data, error } = await sb.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            first_name: firstName,
+            last_name:  lastName,
+            full_name:  `${firstName} ${lastName}`,
+            role:       role,
+          }
+        }
+      })
+
+      if (error) {
+        toast('❌ ' + traductionErreur(error.message), 'err')
+        btn.innerHTML = 'Créer mon compte <span>→</span>'
+        btn.disabled = false
+        return
+      }
+
+      toast('🎉 Compte créé ! Vérifiez votre email pour confirmer.', 'ok')
+      setTimeout(() => {
+        switchTab('login')
+        btn.innerHTML = 'Créer mon compte <span>→</span>'
+        btn.disabled = false
+      }, 2500)
+    }
+
+    // ══════════════════════════════
+    //  TRADUCTION DES ERREURS
+    // ══════════════════════════════
+    function traductionErreur(msg) {
+      if (msg.includes('Invalid login'))       return 'Email ou mot de passe incorrect.'
+      if (msg.includes('Email not confirmed')) return 'Confirmez votre email avant de vous connecter.'
+      if (msg.includes('already registered'))  return 'Cet email est déjà utilisé.'
+      if (msg.includes('Password should be'))  return 'Le mot de passe doit contenir au moins 6 caractères.'
+      if (msg.includes('Unable to validate'))  return 'Email invalide.'
+      return msg
+    }
+
+    // ══════════════════════════════
+    //  TABS
+    // ══════════════════════════════
+    function switchTab(tab) {
+      document.getElementById('tab-login').classList.toggle('active', tab === 'login')
+      document.getElementById('tab-register').classList.toggle('active', tab === 'register')
+      document.getElementById('form-login').classList.toggle('hidden', tab !== 'login')
+      document.getElementById('form-register').classList.toggle('hidden', tab !== 'register')
+    }
+
+    // Auto-tab depuis URL (?tab=register)
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('tab') === 'register') switchTab('register')
+
+    // ══════════════════════════════
+    //  ROLE SELECTION
+    // ══════════════════════════════
     document.querySelectorAll('.role-opt input').forEach(radio => {
       radio.addEventListener('change', () => {
-        document.querySelectorAll('.role-opt').forEach(o => o.classList.remove('selected'));
-        radio.closest('.role-opt').classList.add('selected');
-      });
-    });
+        document.querySelectorAll('.role-opt').forEach(o => o.classList.remove('selected'))
+        radio.closest('.role-opt').classList.add('selected')
+      })
+    })
 
-    // ── LOGIN ──
-    function handleLogin(e) {
-      e.preventDefault();
-      const btn = e.target.querySelector('.auth-btn');
-      btn.textContent = 'Connexion...';
-      btn.disabled = true;
-      setTimeout(() => {
-        toast('✅ Connexion réussie ! Redirection...', 'ok');
-        setTimeout(() => {
-          window.location.href = 'dashboard.html'; // → vers le dashboard
-        }, 1200);
-      }, 1000);
-    }
+    // ══════════════════════════════
+    //  CURSOR
+    // ══════════════════════════════
+    const cursor = document.getElementById('cursor')
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px'
+      cursor.style.top  = e.clientY + 'px'
+    })
+    document.querySelectorAll('button, a, .role-opt').forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('big'))
+      el.addEventListener('mouseleave', () => cursor.classList.remove('big'))
+    })
 
-    // ── REGISTER ──
-    function handleRegister(e) {
-      e.preventDefault();
-      const btn = e.target.querySelector('.auth-btn');
-      btn.textContent = 'Création du compte...';
-      btn.disabled = true;
-      setTimeout(() => {
-        toast('🎉 Compte créé avec succès !', 'ok');
-        setTimeout(() => {
-          switchTab('login');
-          btn.innerHTML = 'Créer mon compte <span>→</span>';
-          btn.disabled = false;
-        }, 1500);
-      }, 1000);
-    }
-
-    // ── TOAST ──
+    // ══════════════════════════════
+    //  TOAST
+    // ══════════════════════════════
     function toast(msg, type = 'info') {
-      const c = document.getElementById('toasts');
-      const t = document.createElement('div');
-      t.className = `toast ${type}`;
-      t.textContent = msg;
-      c.appendChild(t);
+      const c = document.getElementById('toasts')
+      const t = document.createElement('div')
+      t.className = `toast ${type}`
+      t.textContent = msg
+      c.appendChild(t)
       setTimeout(() => {
-        t.style.opacity = '0';
-        t.style.transform = 'translateX(30px)';
-        t.style.transition = '.3s';
-        setTimeout(() => t.remove(), 300);
-      }, 3000);
+        t.style.opacity = '0'
+        t.style.transform = 'translateX(30px)'
+        t.style.transition = '.3s'
+        setTimeout(() => t.remove(), 300)
+      }, 4000)
     }
   </script>
 

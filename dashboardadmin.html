@@ -6,119 +6,81 @@
   <title>BiblioTech — Dashboard Admin</title>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="dashboard.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script src="supabase.js" defer></script>
 </head>
-<body>
+<body style="visibility:hidden">
 
 <div class="cursor" id="cursor"></div>
 
-<!-- ════════ SIDEBAR ════════ -->
 <aside class="sidebar">
   <a href="index.html" class="sb-logo">
     <div class="sb-logo-icon">📚</div>
     <div class="sb-logo-name">BiblioTech</div>
   </a>
-
   <div class="sb-role-badge role-admin">⚙️ Administrateur</div>
-
   <nav class="sb-nav">
     <div class="sb-section">Principal</div>
-    <a href="dashboard-admin.html" class="sb-link active">
-      <span class="si">🏠</span> Tableau de bord
-    </a>
-    <a href="books.html" class="sb-link">
-      <span class="si">📖</span> Livres
-      <span class="sb-badge">24</span>
-    </a>
-    <a href="members.html" class="sb-link">
-      <span class="si">👥</span> Membres
-      <span class="sb-badge">12</span>
-    </a>
-    <a href="borrowings.html" class="sb-link">
-      <span class="si">🔄</span> Emprunts
-      <span class="sb-badge">5</span>
-    </a>
+    <a href="dashboard-admin.html" class="sb-link active"><span class="si">🏠</span> Tableau de bord</a>
+    <a href="books.html" class="sb-link"><span class="si">📖</span> Livres</a>
+    <a href="members.html" class="sb-link"><span class="si">👥</span> Membres</a>
+    <a href="borrowings.html" class="sb-link"><span class="si">🔄</span> Emprunts</a>
     <div class="sb-section">Catalogue</div>
-    <a href="authors.html" class="sb-link">
-      <span class="si">✍️</span> Auteurs
-    </a>
+    <a href="authors.html" class="sb-link"><span class="si">✍️</span> Auteurs</a>
   </nav>
-
   <div class="sb-footer">
     <div class="sb-user">
-      <div class="sb-avatar">AD</div>
+      <div class="sb-avatar" id="user-avatar">--</div>
       <div>
-        <div class="sb-user-name">Administrateur</div>
-        <div class="sb-user-role">admin@bibliotech.fr</div>
+        <div class="sb-user-name" id="user-name">Chargement...</div>
+        <div class="sb-user-role" id="user-email">—</div>
       </div>
     </div>
-    <button class="sb-logout" onclick="window.location.href='auth.html'">
-      🚪 Déconnexion
-    </button>
+    <button class="sb-logout" onclick="handleLogout()">🚪 Déconnexion</button>
   </div>
 </aside>
 
-<!-- ════════ MAIN ════════ -->
 <div class="main">
-
   <div class="topbar">
     <div class="topbar-title">Tableau de bord</div>
     <div class="topbar-right">
       <span class="topbar-date" id="today-date"></span>
-      <a href="books.html" class="btn btn-primary">➕ Ajouter un livre</a>
     </div>
   </div>
 
   <div class="content">
-
-    <!-- WELCOME -->
     <div class="welcome-banner">
       <div class="wb-text">
-        <h2>Bonjour, Administrateur 👋</h2>
+        <h2 id="welcome-msg">Bonjour 👋</h2>
         <p>Voici un aperçu complet de votre bibliothèque aujourd'hui.</p>
       </div>
       <div class="wb-icon">⚙️</div>
     </div>
 
-    <!-- STATS -->
     <div class="stats-grid">
       <div class="stat-card sc-accent">
-        <div class="sc-top">
-          <span class="sc-label">Total Livres</span>
-          <span class="sc-icon">📚</span>
-        </div>
+        <div class="sc-top"><span class="sc-label">Total Livres</span><span class="sc-icon">📚</span></div>
         <div class="sc-val">24</div>
         <div class="sc-sub">dans le catalogue</div>
       </div>
       <div class="stat-card sc-green">
-        <div class="sc-top">
-          <span class="sc-label">Disponibles</span>
-          <span class="sc-icon">✅</span>
-        </div>
+        <div class="sc-top"><span class="sc-label">Disponibles</span><span class="sc-icon">✅</span></div>
         <div class="sc-val">17</div>
         <div class="sc-sub">prêts à emprunter</div>
       </div>
       <div class="stat-card sc-blue">
-        <div class="sc-top">
-          <span class="sc-label">Membres</span>
-          <span class="sc-icon">👥</span>
-        </div>
+        <div class="sc-top"><span class="sc-label">Membres</span><span class="sc-icon">👥</span></div>
         <div class="sc-val">12</div>
         <div class="sc-sub">8 étudiants · 4 enseignants</div>
       </div>
       <div class="stat-card sc-amber">
-        <div class="sc-top">
-          <span class="sc-label">Emprunts actifs</span>
-          <span class="sc-icon">🔄</span>
-        </div>
+        <div class="sc-top"><span class="sc-label">Emprunts actifs</span><span class="sc-icon">🔄</span></div>
         <div class="sc-val">7</div>
         <div class="sc-sub">en circulation</div>
       </div>
     </div>
 
-    <!-- ROW 2 : EMPRUNTS + LIVRES -->
     <div class="two-col">
-
-      <!-- Emprunts en cours -->
       <div class="panel">
         <div class="panel-head">
           <div class="panel-title">Derniers emprunts</div>
@@ -126,49 +88,20 @@
         </div>
         <div class="panel-body">
           <div class="borrow-row">
-            <div class="br-info">
-              <h4>Les Misérables</h4>
-              <p>Sophie Martin · Étudiante</p>
-            </div>
-            <div class="br-right">
-              <div class="br-date">10 fév. 2026</div>
-              <span class="badge b-amber" style="margin-top:4px;">Actif</span>
-            </div>
+            <div class="br-info"><h4>Les Misérables</h4><p>Sophie Martin · Étudiante</p></div>
+            <div class="br-right"><div class="br-date">10 fév. 2026</div><span class="badge b-amber" style="margin-top:4px;">Actif</span></div>
           </div>
           <div class="borrow-row">
-            <div class="br-info">
-              <h4>L'Étranger</h4>
-              <p>Thomas Bernard · Étudiant</p>
-            </div>
-            <div class="br-right">
-              <div class="br-date">15 fév. 2026</div>
-              <span class="badge b-amber" style="margin-top:4px;">Actif</span>
-            </div>
+            <div class="br-info"><h4>L'Étranger</h4><p>Thomas Bernard · Étudiant</p></div>
+            <div class="br-right"><div class="br-date">15 fév. 2026</div><span class="badge b-amber" style="margin-top:4px;">Actif</span></div>
           </div>
           <div class="borrow-row">
-            <div class="br-info">
-              <h4>La Peste</h4>
-              <p>Claire Dubois · Enseignante</p>
-            </div>
-            <div class="br-right">
-              <div class="br-date">20 fév. 2026</div>
-              <span class="badge b-amber" style="margin-top:4px;">Actif</span>
-            </div>
-          </div>
-          <div class="borrow-row">
-            <div class="br-info">
-              <h4>Vol de nuit</h4>
-              <p>Marc Petit · Enseignant</p>
-            </div>
-            <div class="br-right">
-              <div class="br-date">28 fév. 2026</div>
-              <span class="badge b-green" style="margin-top:4px;">Retourné</span>
-            </div>
+            <div class="br-info"><h4>La Peste</h4><p>Claire Dubois · Enseignante</p></div>
+            <div class="br-right"><div class="br-date">20 fév. 2026</div><span class="badge b-amber" style="margin-top:4px;">Actif</span></div>
           </div>
         </div>
       </div>
 
-      <!-- Livres récents -->
       <div class="panel">
         <div class="panel-head">
           <div class="panel-title">Livres récemment ajoutés</div>
@@ -177,87 +110,46 @@
         <div class="panel-body">
           <div class="book-row">
             <div class="book-num">1</div>
-            <div class="book-info" style="flex:1">
-              <h4>Le Deuxième Sexe</h4>
-              <p>Simone de Beauvoir</p>
-            </div>
+            <div class="book-info" style="flex:1"><h4>Le Deuxième Sexe</h4><p>Simone de Beauvoir</p></div>
             <span class="badge b-green">Dispo</span>
           </div>
           <div class="book-row">
             <div class="book-num">2</div>
-            <div class="book-info" style="flex:1">
-              <h4>Notre-Dame de Paris</h4>
-              <p>Victor Hugo</p>
-            </div>
+            <div class="book-info" style="flex:1"><h4>Notre-Dame de Paris</h4><p>Victor Hugo</p></div>
             <span class="badge b-green">Dispo</span>
           </div>
           <div class="book-row">
             <div class="book-num">3</div>
-            <div class="book-info" style="flex:1">
-              <h4>Les Misérables</h4>
-              <p>Victor Hugo</p>
-            </div>
-            <span class="badge b-red">Emprunté</span>
-          </div>
-          <div class="book-row">
-            <div class="book-num">4</div>
-            <div class="book-info" style="flex:1">
-              <h4>La Peste</h4>
-              <p>Albert Camus</p>
-            </div>
+            <div class="book-info" style="flex:1"><h4>Les Misérables</h4><p>Victor Hugo</p></div>
             <span class="badge b-red">Emprunté</span>
           </div>
         </div>
       </div>
-
     </div>
 
-    <!-- ROW 3 : ALERTES + MEMBRES -->
     <div class="two-col">
-
-      <!-- Alertes -->
       <div class="panel">
-        <div class="panel-head">
-          <div class="panel-title">⚠️ Alertes</div>
-        </div>
+        <div class="panel-head"><div class="panel-title">⚠️ Alertes</div></div>
         <div class="panel-body">
           <div class="alert-row">
             <div class="alert-dot red"></div>
-            <div class="alert-info">
-              <h4>Sophie Martin — Limite atteinte</h4>
-              <p>A emprunté 3/3 livres (limite étudiant)</p>
-            </div>
+            <div class="alert-info"><h4>Sophie Martin — Limite atteinte</h4><p>A emprunté 3/3 livres (limite étudiant)</p></div>
           </div>
           <div class="alert-row">
             <div class="alert-dot amber"></div>
-            <div class="alert-info">
-              <h4>Thomas Bernard — 2 livres empruntés</h4>
-              <p>Approche la limite · encore 1 emprunt possible</p>
-            </div>
-          </div>
-          <div class="alert-row">
-            <div class="alert-dot amber"></div>
-            <div class="alert-info">
-              <h4>7 livres empruntés ce mois</h4>
-              <p>Activité élevée comparée au mois précédent</p>
-            </div>
+            <div class="alert-info"><h4>Thomas Bernard — 2 livres empruntés</h4><p>Approche la limite · encore 1 emprunt possible</p></div>
           </div>
         </div>
       </div>
 
-      <!-- Membres actifs -->
       <div class="panel">
         <div class="panel-head">
           <div class="panel-title">Membres actifs</div>
           <a href="members.html" class="btn btn-ghost btn-sm">Gérer</a>
         </div>
         <div class="panel-body">
-
           <div class="borrow-row">
-            <div class="br-info">
-              <h4>Sophie Martin</h4>
-              <p>Étudiante</p>
-            </div>
+            <div class="br-info"><h4>Sophie Martin</h4><p>Étudiante</p></div>
             <div style="min-width:120px;">
               <div class="prog-wrap">
                 <div class="prog-label"><span>Emprunts</span><span>3/3</span></div>
@@ -265,25 +157,8 @@
               </div>
             </div>
           </div>
-
           <div class="borrow-row">
-            <div class="br-info">
-              <h4>Thomas Bernard</h4>
-              <p>Étudiant</p>
-            </div>
-            <div style="min-width:120px;">
-              <div class="prog-wrap">
-                <div class="prog-label"><span>Emprunts</span><span>2/3</span></div>
-                <div class="prog-bar"><div class="prog-fill amber" style="width:66%"></div></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="borrow-row">
-            <div class="br-info">
-              <h4>Claire Dubois</h4>
-              <p>Enseignante</p>
-            </div>
+            <div class="br-info"><h4>Claire Dubois</h4><p>Enseignante</p></div>
             <div style="min-width:120px;">
               <div class="prog-wrap">
                 <div class="prog-label"><span>Emprunts</span><span>1/10</span></div>
@@ -291,44 +166,33 @@
               </div>
             </div>
           </div>
-
-          <div class="borrow-row">
-            <div class="br-info">
-              <h4>Marc Petit</h4>
-              <p>Enseignant</p>
-            </div>
-            <div style="min-width:120px;">
-              <div class="prog-wrap">
-                <div class="prog-label"><span>Emprunts</span><span>0/10</span></div>
-                <div class="prog-bar"><div class="prog-fill green" style="width:0%"></div></div>
-              </div>
-            </div>
-          </div>
-
         </div>
       </div>
-
     </div>
 
-  </div><!-- /content -->
-</div><!-- /main -->
+  </div>
+</div>
 
 <script>
-  // Cursor
-  const cursor = document.getElementById('cursor');
-  document.addEventListener('mousemove', e => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top  = e.clientY + 'px';
-  });
-  document.querySelectorAll('a, button, .stat-card').forEach(el => {
-    el.addEventListener('mouseenter', () => cursor.classList.add('big'));
-    el.addEventListener('mouseleave', () => cursor.classList.remove('big'));
-  });
-
   // Date
-  const d = new Date();
   document.getElementById('today-date').textContent =
-    d.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+    new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' })
+
+  // Cursor
+  const cursor = document.getElementById('cursor')
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px'
+    cursor.style.top  = e.clientY + 'px'
+  })
+  document.querySelectorAll('a, button, .stat-card').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('big'))
+    el.addEventListener('mouseleave', () => cursor.classList.remove('big'))
+  })
+
+  // Auth — affiche la page seulement si connecté avec le bon rôle
+  requireRole('admin', {
+    onSuccess: () => { document.body.style.visibility = 'visible' }
+  })
 </script>
 </body>
 </html>

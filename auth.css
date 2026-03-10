@@ -1,3 +1,18 @@
+﻿/* ── CURSOR ── */
+*, a, button { cursor: none !important; }
+.cursor {
+  width: 20px; height: 20px;
+  background: var(--accent);
+  border: 2px solid white;
+  border-radius: 50%;
+  position: fixed; pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width .2s, height .2s, opacity .2s;
+  left: 50%; top: 50%;
+}
+.cursor.big { width: 32px; height: 32px; opacity: .3; }
+
 .auth-body {
   background: var(--ink);
   min-height: 100vh;
