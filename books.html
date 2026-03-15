@@ -7,151 +7,85 @@
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="dashboard.css">
   <style>
-    /* ── BOOKS SPECIFIC ── */
-    .toolbar {
-      display: flex; align-items: center; gap: 12px;
-      margin-bottom: 22px; flex-wrap: wrap;
-    }
-    .search-wrap {
-      flex: 1; min-width: 200px;
-      position: relative;
-    }
+    .toolbar { display:flex; align-items:center; gap:12px; margin-bottom:22px; flex-wrap:wrap; }
+    .search-wrap { flex:1; min-width:200px; position:relative; }
     .search-wrap input {
-      width: 100%;
-      background: var(--s1);
-      border: 1px solid var(--border);
-      border-radius: 9px;
-      padding: 9px 14px 9px 38px;
-      color: var(--text);
-      font-family: 'Instrument Sans', sans-serif;
-      font-size: .85rem; outline: none;
-      transition: border-color .2s;
+      width:100%; background:var(--s1); border:1px solid var(--border);
+      border-radius:9px; padding:9px 14px 9px 38px;
+      color:var(--text); font-family:'Instrument Sans',sans-serif;
+      font-size:.85rem; outline:none; transition:border-color .2s;
     }
-    .search-wrap input:focus { border-color: var(--accent); }
-    .search-wrap input::placeholder { color: var(--dim); }
-    .search-icon {
-      position: absolute; left: 12px; top: 50%;
-      transform: translateY(-50%);
-      font-size: .85rem; pointer-events: none;
-    }
-    .filter-tabs {
-      display: flex; gap: 4px;
-      background: var(--s1);
-      border: 1px solid var(--border);
-      border-radius: 9px; padding: 4px;
-    }
+    .search-wrap input:focus { border-color:var(--accent); }
+    .search-wrap input::placeholder { color:var(--dim); }
+    .search-icon { position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:.85rem; pointer-events:none; }
+    .filter-tabs { display:flex; gap:4px; background:var(--s1); border:1px solid var(--border); border-radius:9px; padding:4px; }
     .filter-tab {
-      padding: 6px 14px; border-radius: 6px;
-      border: none; background: none;
-      font-family: 'Instrument Sans', sans-serif;
-      font-size: .78rem; font-weight: 600;
-      color: var(--dim); transition: all .18s;
+      padding:6px 14px; border-radius:6px; border:none; background:none;
+      font-family:'Instrument Sans',sans-serif; font-size:.78rem; font-weight:600;
+      color:var(--dim); transition:all .18s;
     }
-    .filter-tab.active { background: var(--accent); color: #fff; }
+    .filter-tab.active { background:var(--accent); color:#fff; }
 
-    /* ── BOOKS GRID ── */
-    .books-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 14px;
-    }
+    .books-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); gap:14px; }
     .book-card {
-      background: var(--s1);
-      border: 1px solid var(--border);
-      border-radius: 12px; overflow: hidden;
-      transition: transform .2s, border-color .2s;
-      animation: fadeUp .3s ease both;
+      background:var(--s1); border:1px solid var(--border);
+      border-radius:12px; overflow:hidden;
+      transition:transform .2s, border-color .2s;
+      animation:fadeUp .3s ease both;
     }
-    .book-card:hover { transform: translateY(-3px); border-color: var(--accent); }
-    .book-card-spine {
-      height: 5px;
-    }
-    .book-card-body { padding: 16px 18px; }
+    .book-card:hover { transform:translateY(-3px); border-color:var(--accent); }
+    .book-card-spine { height:5px; }
+    .spine-available { background:var(--green); }
+    .spine-borrowed  { background:var(--red); }
+    .book-card-body { padding:16px 18px; }
     .book-card-title {
-      font-family: 'Fraunces', serif;
-      font-size: 1rem; font-weight: 700;
-      color: var(--text); margin-bottom: 4px;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      font-family:'Fraunces',serif; font-size:1rem; font-weight:700;
+      color:var(--text); margin-bottom:4px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     }
-    .book-card-author {
-      font-size: .75rem; color: var(--dim); margin-bottom: 12px;
-    }
-    .book-card-footer {
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .book-card-actions { display: flex; gap: 6px; }
+    .book-card-author { font-size:.75rem; color:var(--dim); margin-bottom:12px; }
+    .book-card-footer { display:flex; align-items:center; justify-content:space-between; }
+    .book-card-actions { display:flex; gap:6px; }
 
-    /* ── MODAL ── */
     .modal-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.7);
-      backdrop-filter: blur(6px);
-      z-index: 500;
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0; pointer-events: none;
-      transition: opacity .25s;
+      position:fixed; inset:0; background:rgba(0,0,0,.7);
+      backdrop-filter:blur(6px); z-index:500;
+      display:flex; align-items:center; justify-content:center;
+      opacity:0; pointer-events:none; transition:opacity .25s;
     }
-    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal-overlay.open { opacity:1; pointer-events:all; }
     .modal {
-      background: var(--s2);
-      border: 1px solid var(--border);
-      border-radius: 16px; padding: 28px;
-      width: 440px; max-width: 95vw;
-      transform: scale(.95) translateY(10px);
-      transition: transform .25s;
+      background:var(--s2); border:1px solid var(--border);
+      border-radius:16px; padding:28px; width:440px; max-width:95vw;
+      transform:scale(.95) translateY(10px); transition:transform .25s;
     }
-    .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+    .modal-overlay.open .modal { transform:scale(1) translateY(0); }
     .modal-title {
-      font-family: 'Fraunces', serif;
-      font-size: 1.2rem; font-weight: 700;
-      margin-bottom: 20px;
-      display: flex; align-items: center; justify-content: space-between;
+      font-family:'Fraunces',serif; font-size:1.2rem; font-weight:700;
+      margin-bottom:20px; display:flex; align-items:center; justify-content:space-between;
     }
-    .modal-close {
-      background: none; border: none;
-      color: var(--dim); font-size: 1.2rem;
-    }
-    .modal-close:hover { color: var(--text); }
-    .fg { margin-bottom: 14px; }
-    .fg label {
-      display: block;
-      font-size: .68rem; color: var(--dim);
-      text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;
-      margin-bottom: 6px;
-    }
+    .modal-close { background:none; border:none; color:var(--dim); font-size:1.2rem; }
+    .fg { margin-bottom:14px; }
+    .fg label { display:block; font-size:.68rem; color:var(--dim); text-transform:uppercase; letter-spacing:1.5px; font-weight:600; margin-bottom:6px; }
     .fg input, .fg select {
-      width: 100%;
-      background: var(--s3);
-      border: 1px solid var(--border);
-      border-radius: 8px; padding: 10px 12px;
-      color: var(--text);
-      font-family: 'Instrument Sans', sans-serif;
-      font-size: .85rem; outline: none;
-      transition: border-color .2s;
+      width:100%; background:var(--s3); border:1px solid var(--border);
+      border-radius:8px; padding:10px 12px; color:var(--text);
+      font-family:'Instrument Sans',sans-serif; font-size:.85rem; outline:none; transition:border-color .2s;
     }
-    .fg input:focus, .fg select:focus { border-color: var(--accent); }
-    .fg select option { background: var(--s2); }
-    .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+    .fg input:focus, .fg select:focus { border-color:var(--accent); }
+    .fg select option { background:var(--s2); }
+    .modal-actions { display:flex; gap:10px; margin-top:20px; justify-content:flex-end; }
 
-    /* ── TOAST ── */
-    .toasts { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
-    .toast {
-      background: var(--s2); border: 1px solid var(--border);
-      border-radius: 10px; padding: 12px 16px;
-      font-size: .82rem; color: var(--text);
-      animation: toastIn .25s ease; min-width: 230px;
-    }
-    .toast.ok  { border-color: rgba(52,211,153,.4); }
-    .toast.err { border-color: rgba(248,113,113,.4); }
-    @keyframes toastIn { from { transform: translateX(20px); opacity:0; } to { transform: none; opacity:1; } }
+    .toasts { position:fixed; bottom:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:8px; }
+    .toast { background:var(--s2); border:1px solid var(--border); border-radius:10px; padding:12px 16px; font-size:.82rem; color:var(--text); animation:toastIn .25s ease; min-width:230px; }
+    .toast.ok  { border-color:rgba(52,211,153,.4); }
+    .toast.err { border-color:rgba(248,113,113,.4); }
+    @keyframes toastIn { from { transform:translateX(20px); opacity:0; } to { transform:none; opacity:1; } }
 
-    .empty-state { text-align: center; padding: 60px 20px; color: var(--dim); }
-    .empty-state .ei { font-size: 3rem; margin-bottom: 12px; opacity: .3; }
-    .empty-state p { font-size: .9rem; }
+    .empty-state { text-align:center; padding:60px 20px; color:var(--dim); grid-column:1/-1; }
+    .empty-state .ei { font-size:3rem; margin-bottom:12px; opacity:.3; }
 
-    /* Spine colors by availability */
-    .spine-available { background: var(--green); }
-    .spine-borrowed  { background: var(--red); }
+    .loading { text-align:center; padding:60px; color:var(--dim); grid-column:1/-1; font-size:.9rem; }
   </style>
 </head>
 <body style="visibility:hidden">
@@ -159,8 +93,7 @@
 <div class="cursor" id="cursor"></div>
 <div class="toasts" id="toasts"></div>
 
-<!-- ════════ SIDEBAR ════════ -->
-<aside class="sidebar" id="sidebar">
+<aside class="sidebar">
   <a href="index.html" class="sb-logo">
     <div class="sb-logo-icon">📚</div>
     <div class="sb-logo-name">BiblioTech</div>
@@ -179,56 +112,41 @@
   </div>
 </aside>
 
-<!-- ════════ MAIN ════════ -->
 <div class="main">
   <div class="topbar">
     <div class="topbar-title">Catalogue des livres</div>
     <div class="topbar-right">
       <span class="topbar-date" id="today-date"></span>
-      <button class="btn btn-primary" id="btn-add-book" onclick="openModal()" style="display:none">
-        ➕ Ajouter un livre
-      </button>
+      <button class="btn btn-primary" id="btn-add" onclick="openModal()" style="display:none">➕ Ajouter</button>
     </div>
   </div>
-
   <div class="content">
-
-    <!-- TOOLBAR -->
     <div class="toolbar">
       <div class="search-wrap">
         <span class="search-icon">🔍</span>
         <input type="text" id="search-input" placeholder="Rechercher par titre ou auteur...">
       </div>
       <div class="filter-tabs">
-        <button class="filter-tab active" onclick="setFilter('all', this)">Tous</button>
-        <button class="filter-tab" onclick="setFilter('available', this)">Disponibles</button>
-        <button class="filter-tab" onclick="setFilter('borrowed', this)">Empruntés</button>
+        <button class="filter-tab active" onclick="setFilter('all',this)">Tous</button>
+        <button class="filter-tab" onclick="setFilter('available',this)">Disponibles</button>
+        <button class="filter-tab" onclick="setFilter('borrowed',this)">Empruntés</button>
       </div>
     </div>
-
-    <!-- BOOKS GRID -->
     <div class="books-grid" id="books-grid">
-      <!-- rempli par JS -->
+      <div class="loading">⏳ Chargement des livres...</div>
     </div>
-
   </div>
 </div>
 
-<!-- ════════ MODAL AJOUTER/MODIFIER ════════ -->
-<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+<!-- MODAL ADD/EDIT -->
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <div class="modal-title">
       <span id="modal-title-text">Ajouter un livre</span>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
-    <div class="fg">
-      <label>Titre</label>
-      <input type="text" id="input-title" placeholder="Ex: Le Petit Prince">
-    </div>
-    <div class="fg">
-      <label>Auteur</label>
-      <input type="text" id="input-author" placeholder="Ex: Antoine de Saint-Exupéry">
-    </div>
+    <div class="fg"><label>Titre</label><input type="text" id="input-title" placeholder="Ex: Le Petit Prince"></div>
+    <div class="fg"><label>Auteur</label><input type="text" id="input-author" placeholder="Ex: Antoine de Saint-Exupéry"></div>
     <div class="fg">
       <label>Disponibilité</label>
       <select id="input-status">
@@ -238,21 +156,19 @@
     </div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeModal()">Annuler</button>
-      <button class="btn btn-primary" onclick="saveBook()">Enregistrer</button>
+      <button class="btn btn-primary" id="btn-save" onclick="saveBook()">Enregistrer</button>
     </div>
   </div>
 </div>
 
-<!-- ════════ MODAL CONFIRMATION SUPPRESSION ════════ -->
-<div class="modal-overlay" id="modal-delete" onclick="handleDeleteOverlayClick(event)">
+<!-- MODAL DELETE -->
+<div class="modal-overlay" id="modal-delete" onclick="if(event.target===this)closeDeleteModal()">
   <div class="modal" style="width:360px;">
     <div class="modal-title">
       <span>Supprimer ce livre ?</span>
       <button class="modal-close" onclick="closeDeleteModal()">✕</button>
     </div>
-    <p style="color:var(--dim);font-size:.85rem;margin-bottom:20px;">
-      Cette action est irréversible. Le livre sera définitivement supprimé du catalogue.
-    </p>
+    <p style="color:var(--dim);font-size:.85rem;margin-bottom:20px;">Cette action est irréversible.</p>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeDeleteModal()">Annuler</button>
       <button class="btn btn-primary" style="background:var(--red);" onclick="confirmDelete()">Supprimer</button>
@@ -261,294 +177,170 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="db.js"></script>
 <script>
-  // ══════════════════════════════
-  //  SUPABASE
-  // ══════════════════════════════
-  const SUPABASE_URL = 'https://tpyjpobheliuqkkriuod.supabase.co'
-  const SUPABASE_KEY = 'sb_publishable_wCTVTGyYstnDSLmJh-lFjA_ORruAhnm'
-  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+  let allBooks = [], editingId = null, deletingId = null
+  let currentFilter = 'all', searchQuery = '', currentRole = null
 
-  let currentUser = null
-  let currentRole = null
-  let allBooks    = []
-  let editingId   = null
-  let deletingId  = null
-  let currentFilter = 'all'
-  let searchQuery   = ''
-
-  async function handleLogout() {
-    await sb.auth.signOut()
-    window.location.href = 'auth.html'
-  }
-
-  // ══════════════════════════════
-  //  INIT
-  // ══════════════════════════════
   async function init() {
-    const { data: { session } } = await sb.auth.getSession()
-    if (!session) { window.location.href = 'auth.html'; return }
+    const auth = await requireAuth(['admin','teacher','student'])
+    if (!auth) return
+    const { member } = auth
+    currentRole = member.role
 
-    currentUser = session.user
-    currentRole = currentUser.user_metadata?.role || 'student'
-
-    // Infos user
-    const fullName  = (currentUser.user_metadata?.full_name || currentUser.email.split('@')[0]).trim()
-    const firstName = currentUser.user_metadata?.first_name || fullName.split(' ')[0]
-    const initials  = fullName.split(' ').filter(Boolean).map(n => n[0]).join('').toUpperCase().slice(0,2)
-
-    document.getElementById('user-name').textContent   = fullName
-    document.getElementById('user-email').textContent  = currentUser.email
-    document.getElementById('user-avatar').textContent = initials
-    document.getElementById('today-date').textContent  =
-      new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' })
-
-    // Sidebar selon rôle
-    buildSidebar(currentRole)
-
-    // Bouton ajouter visible pour admin seulement
-    if (currentRole === 'admin') {
-      document.getElementById('btn-add-book').style.display = 'flex'
-    }
+    fillUserUI(member)
+    buildSidebar(member.role)
+    if (member.role === 'admin') document.getElementById('btn-add').style.display = 'flex'
 
     await loadBooks()
     document.body.style.visibility = 'visible'
   }
 
-  // ══════════════════════════════
-  //  SIDEBAR DYNAMIQUE
-  // ══════════════════════════════
   function buildSidebar(role) {
     const badge = document.getElementById('role-badge')
     const nav   = document.getElementById('sidebar-nav')
-    const dashUrl = role === 'admin' ? 'dashboard-admin.html'
-                  : role === 'teacher' ? 'dashboard-teacher.html'
-                  : 'dashboard-student.html'
-
+    const dash  = role==='admin' ? 'dashboard-admin.html' : role==='teacher' ? 'dashboard-teacher.html' : 'dashboard-student.html'
     if (role === 'admin') {
-      badge.className = 'sb-role-badge role-admin'
-      badge.textContent = '⚙️ Administrateur'
-      nav.innerHTML = `
-        <div class="sb-section">Principal</div>
-        <a href="${dashUrl}" class="sb-link"><span class="si">🏠</span> Tableau de bord</a>
+      badge.className='sb-role-badge role-admin'; badge.textContent='⚙️ Administrateur'
+      nav.innerHTML=`<div class="sb-section">Principal</div>
+        <a href="${dash}" class="sb-link"><span class="si">🏠</span> Tableau de bord</a>
         <a href="books.html" class="sb-link active"><span class="si">📖</span> Livres</a>
         <a href="members.html" class="sb-link"><span class="si">👥</span> Membres</a>
         <a href="borrowings.html" class="sb-link"><span class="si">🔄</span> Emprunts</a>
         <div class="sb-section">Catalogue</div>
         <a href="authors.html" class="sb-link"><span class="si">✍️</span> Auteurs</a>`
     } else if (role === 'teacher') {
-      badge.className = 'sb-role-badge role-teacher'
-      badge.textContent = '🏫 Enseignant'
-      document.getElementById('user-avatar').style.background = 'var(--green)'
-      nav.innerHTML = `
-        <div class="sb-section">Mon espace</div>
-        <a href="${dashUrl}" class="sb-link"><span class="si">🏠</span> Tableau de bord</a>
-        <a href="books.html" class="sb-link active"><span class="si">📖</span> Parcourir les livres</a>
-        <a href="authors.html" class="sb-link"><span class="si">✍️</span> Auteurs</a>`
+      badge.className='sb-role-badge role-teacher'; badge.textContent='🏫 Enseignant'
+      document.getElementById('user-avatar').style.background='var(--green)'
+      nav.innerHTML=`<div class="sb-section">Mon espace</div>
+        <a href="${dash}" class="sb-link"><span class="si">🏠</span> Tableau de bord</a>
+        <a href="books.html" class="sb-link active"><span class="si">📖</span> Livres</a>
+        <a href="borrowings.html" class="sb-link"><span class="si">🔄</span> Mes emprunts</a>`
     } else {
-      badge.className = 'sb-role-badge role-student'
-      badge.textContent = '🎓 Étudiant'
-      document.getElementById('user-avatar').style.background = 'var(--blue)'
-      nav.innerHTML = `
-        <div class="sb-section">Mon espace</div>
-        <a href="${dashUrl}" class="sb-link"><span class="si">🏠</span> Tableau de bord</a>
-        <a href="books.html" class="sb-link active"><span class="si">📖</span> Parcourir les livres</a>`
+      badge.className='sb-role-badge role-student'; badge.textContent='🎓 Étudiant'
+      document.getElementById('user-avatar').style.background='var(--blue)'
+      nav.innerHTML=`<div class="sb-section">Mon espace</div>
+        <a href="${dash}" class="sb-link"><span class="si">🏠</span> Tableau de bord</a>
+        <a href="books.html" class="sb-link active"><span class="si">📖</span> Livres</a>
+        <a href="borrowings.html" class="sb-link"><span class="si">🔄</span> Mes emprunts</a>`
     }
   }
 
-  // ══════════════════════════════
-  //  CHARGER LIVRES
-  // ══════════════════════════════
   async function loadBooks() {
-    // Pour l'instant données mockées — à remplacer par Supabase DB plus tard
-    allBooks = [
-      { id: 1, title: 'Le Petit Prince',     author: 'Antoine de Saint-Exupéry', status: 'available' },
-      { id: 2, title: 'Les Misérables',      author: 'Victor Hugo',              status: 'borrowed'  },
-      { id: 3, title: 'L\'Étranger',         author: 'Albert Camus',             status: 'borrowed'  },
-      { id: 4, title: 'La Peste',            author: 'Albert Camus',             status: 'available' },
-      { id: 5, title: 'Notre-Dame de Paris', author: 'Victor Hugo',              status: 'available' },
-      { id: 6, title: 'Le Deuxième Sexe',    author: 'Simone de Beauvoir',       status: 'available' },
-      { id: 7, title: 'Vol de nuit',         author: 'Antoine de Saint-Exupéry', status: 'available' },
-      { id: 8, title: 'Germinal',            author: 'Émile Zola',               status: 'borrowed'  },
-    ]
+    document.getElementById('books-grid').innerHTML = '<div class="loading">⏳ Chargement...</div>'
+    allBooks = await getBooks()
     renderBooks()
   }
 
-  // ══════════════════════════════
-  //  AFFICHER LIVRES
-  // ══════════════════════════════
   function renderBooks() {
     const grid = document.getElementById('books-grid')
     let filtered = allBooks
-
-    // Filtre statut
     if (currentFilter === 'available') filtered = filtered.filter(b => b.status === 'available')
     if (currentFilter === 'borrowed')  filtered = filtered.filter(b => b.status === 'borrowed')
-
-    // Recherche
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase()
-      filtered = filtered.filter(b =>
-        b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q)
-      )
+      filtered = filtered.filter(b => b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q))
     }
-
     if (filtered.length === 0) {
-      grid.innerHTML = `
-        <div class="empty-state" style="grid-column:1/-1;">
-          <div class="ei">📚</div>
-          <p>Aucun livre trouvé</p>
-        </div>`
+      grid.innerHTML = '<div class="empty-state"><div class="ei">📚</div><p>Aucun livre trouvé</p></div>'
       return
     }
-
     grid.innerHTML = filtered.map((b, i) => `
-      <div class="book-card" style="animation-delay:${i * 0.04}s">
-        <div class="book-card-spine ${b.status === 'available' ? 'spine-available' : 'spine-borrowed'}"></div>
+      <div class="book-card" style="animation-delay:${i*.04}s">
+        <div class="book-card-spine ${b.status==='available'?'spine-available':'spine-borrowed'}"></div>
         <div class="book-card-body">
           <div class="book-card-title" title="${b.title}">${b.title}</div>
           <div class="book-card-author">✍️ ${b.author}</div>
           <div class="book-card-footer">
-            <span class="badge ${b.status === 'available' ? 'b-green' : 'b-red'}">
-              ${b.status === 'available' ? 'Disponible' : 'Emprunté'}
+            <span class="badge ${b.status==='available'?'b-green':'b-red'}">
+              ${b.status==='available'?'Disponible':'Emprunté'}
             </span>
             <div class="book-card-actions">
-              ${b.status === 'available' && currentRole !== 'admin' ? `
-                <button class="btn btn-primary btn-sm" onclick="borrowBook(${b.id})">Emprunter</button>
-              ` : ''}
-              ${currentRole === 'admin' ? `
-                <button class="btn btn-ghost btn-sm" onclick="editBook(${b.id})">✏️</button>
-                <button class="btn btn-ghost btn-sm" style="border-color:transparent;" onclick="openDeleteModal(${b.id})">🗑️</button>
-              ` : ''}
+              ${b.status==='available' && currentRole!=='admin' ? `
+                <button class="btn btn-primary btn-sm" onclick="borrowBook('${b.id}','${b.title.replace(/'/g,"\\'")}')">Emprunter</button>` : ''}
+              ${currentRole==='admin' ? `
+                <button class="btn btn-ghost btn-sm" onclick="editBook('${b.id}')">✏️</button>
+                <button class="btn btn-ghost btn-sm" style="border-color:transparent" onclick="openDeleteModal('${b.id}')">🗑️</button>` : ''}
             </div>
           </div>
         </div>
-      </div>
-    `).join('')
+      </div>`).join('')
   }
 
-  // ══════════════════════════════
-  //  FILTRE + RECHERCHE
-  // ══════════════════════════════
-  function setFilter(filter, btn) {
-    currentFilter = filter
+  function setFilter(f, btn) {
+    currentFilter = f
     document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'))
     btn.classList.add('active')
     renderBooks()
   }
+  document.getElementById('search-input').addEventListener('input', e => { searchQuery = e.target.value; renderBooks() })
 
-  document.getElementById('search-input').addEventListener('input', e => {
-    searchQuery = e.target.value
-    renderBooks()
-  })
-
-  // ══════════════════════════════
-  //  MODAL AJOUTER / MODIFIER
-  // ══════════════════════════════
   function openModal(book = null) {
     editingId = book ? book.id : null
     document.getElementById('modal-title-text').textContent = book ? 'Modifier le livre' : 'Ajouter un livre'
-    document.getElementById('input-title').value  = book ? book.title  : ''
-    document.getElementById('input-author').value = book ? book.author : ''
-    document.getElementById('input-status').value = book ? book.status : 'available'
+    document.getElementById('input-title').value  = book?.title  || ''
+    document.getElementById('input-author').value = book?.author || ''
+    document.getElementById('input-status').value = book?.status || 'available'
     document.getElementById('modal-overlay').classList.add('open')
   }
+  function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); editingId = null }
 
-  function closeModal() {
-    document.getElementById('modal-overlay').classList.remove('open')
-    editingId = null
-  }
+  function editBook(id) { openModal(allBooks.find(b => b.id === id)) }
 
-  function handleOverlayClick(e) {
-    if (e.target === document.getElementById('modal-overlay')) closeModal()
-  }
-
-  function editBook(id) {
-    const book = allBooks.find(b => b.id === id)
-    if (book) openModal(book)
-  }
-
-  function saveBook() {
+  async function saveBook() {
     const title  = document.getElementById('input-title').value.trim()
     const author = document.getElementById('input-author').value.trim()
     const status = document.getElementById('input-status').value
-
     if (!title || !author) { toast('❌ Titre et auteur requis.', 'err'); return }
 
-    if (editingId) {
-      const idx = allBooks.findIndex(b => b.id === editingId)
-      if (idx !== -1) allBooks[idx] = { ...allBooks[idx], title, author, status }
-      toast('✅ Livre modifié avec succès.', 'ok')
-    } else {
-      const newId = Math.max(...allBooks.map(b => b.id), 0) + 1
-      allBooks.push({ id: newId, title, author, status })
-      toast('✅ Livre ajouté avec succès.', 'ok')
+    const btn = document.getElementById('btn-save')
+    btn.textContent = '⏳ Enregistrement...'; btn.disabled = true
+
+    try {
+      if (editingId) {
+        await updateBook(editingId, { title, author, status })
+        toast('✅ Livre modifié.', 'ok')
+      } else {
+        await addBook({ title, author, status })
+        toast('✅ Livre ajouté.', 'ok')
+      }
+      closeModal()
+      await loadBooks()
+    } catch(e) {
+      toast('❌ Erreur : ' + e.message, 'err')
+    } finally {
+      btn.textContent = 'Enregistrer'; btn.disabled = false
     }
-
-    closeModal()
-    renderBooks()
   }
 
-  // ══════════════════════════════
-  //  MODAL SUPPRESSION
-  // ══════════════════════════════
-  function openDeleteModal(id) {
-    deletingId = id
-    document.getElementById('modal-delete').classList.add('open')
+  function openDeleteModal(id) { deletingId = id; document.getElementById('modal-delete').classList.add('open') }
+  function closeDeleteModal() { document.getElementById('modal-delete').classList.remove('open'); deletingId = null }
+
+  async function confirmDelete() {
+    try {
+      await deleteBook(deletingId)
+      toast('🗑️ Livre supprimé.', 'ok')
+      closeDeleteModal()
+      await loadBooks()
+    } catch(e) { toast('❌ Erreur : ' + e.message, 'err') }
   }
 
-  function closeDeleteModal() {
-    document.getElementById('modal-delete').classList.remove('open')
-    deletingId = null
+  async function borrowBook(id, title) {
+    const auth = await requireAuth(['student','teacher'])
+    if (!auth) return
+    try {
+      const today = new Date().toISOString().split('T')[0]
+      await addBorrowing({ bookId: id, memberId: auth.member.id, borrowDate: today })
+      toast(`📖 "${title}" emprunté !`, 'ok')
+      await loadBooks()
+    } catch(e) { toast('❌ ' + e.message, 'err') }
   }
 
-  function handleDeleteOverlayClick(e) {
-    if (e.target === document.getElementById('modal-delete')) closeDeleteModal()
-  }
-
-  function confirmDelete() {
-    allBooks = allBooks.filter(b => b.id !== deletingId)
-    closeDeleteModal()
-    renderBooks()
-    toast('🗑️ Livre supprimé.', 'ok')
-  }
-
-  // ══════════════════════════════
-  //  EMPRUNTER
-  // ══════════════════════════════
-  function borrowBook(id) {
-    const book = allBooks.find(b => b.id === id)
-    if (!book) return
-    book.status = 'borrowed'
-    renderBooks()
-    toast(`📖 "${book.title}" emprunté avec succès !`, 'ok')
-  }
-
-  // ══════════════════════════════
-  //  TOAST
-  // ══════════════════════════════
-  function toast(msg, type = 'info') {
-    const c = document.getElementById('toasts')
-    const t = document.createElement('div')
-    t.className = `toast ${type}`
-    t.textContent = msg
-    c.appendChild(t)
-    setTimeout(() => {
-      t.style.opacity = '0'; t.style.transform = 'translateX(20px)'; t.style.transition = '.3s'
-      setTimeout(() => t.remove(), 300)
-    }, 3500)
-  }
-
-  // ══════════════════════════════
-  //  CURSOR
-  // ══════════════════════════════
+  // Cursor
   const cursor = document.getElementById('cursor')
-  document.addEventListener('mousemove', e => {
-    cursor.style.left = e.clientX + 'px'
-    cursor.style.top  = e.clientY + 'px'
-  })
+  document.addEventListener('mousemove', e => { cursor.style.left=e.clientX+'px'; cursor.style.top=e.clientY+'px' })
   document.addEventListener('mouseover', e => {
-    if (e.target.matches('a, button, .book-card')) cursor.classList.add('big')
+    if (e.target.matches('a,button,.book-card')) cursor.classList.add('big')
     else cursor.classList.remove('big')
   })
 
