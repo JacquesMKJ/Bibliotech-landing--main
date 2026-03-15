@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BiblioTech — Membres</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="dashboard.css">
+  <style>
+    /* ── TOOLBAR ── */
+    .toolbar {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 22px; flex-wrap: wrap;
+    }
+    .search-wrap { flex: 1; min-width: 200px; position: relative; }
+    .search-wrap input {
+      width: 100%;
+      background: var(--s1); border: 1px solid var(--border);
+      border-radius: 9px; padding: 9px 14px 9px 38px;
+      color: var(--text); font-family: 'Instrument Sans', sans-serif;
+      font-size: .85rem; outline: none; transition: border-color .2s;
+    }
+    .search-wrap input:focus { border-color: var(--accent); }
+    .search-wrap input::placeholder { color: var(--dim); }
+    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: .85rem; pointer-events: none; }
+    .filter-tabs {
+      display: flex; gap: 4px;
+      background: var(--s1); border: 1px solid var(--border);
+      border-radius: 9px; padding: 4px;
+    }
+    .filter-tab {
+      padding: 6px 14px; border-radius: 6px; border: none; background: none;
+      font-family: 'Instrument Sans', sans-serif; font-size: .78rem; font-weight: 600;
+      color: var(--dim); transition: all .18s;
+    }
+    .filter-tab.active { background: var(--accent); color: #fff; }
+
+    /* ── TABLE ── */
+    .table-wrap {
+      background: var(--s1); border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
+      animation: fadeUp .3s ease;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead { background: var(--s2); }
+    th {
+      padding: 12px 18px; text-align: left;
+      font-size: .68rem; color: var(--dim);
+      text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 14px 18px;
+      font-size: .84rem; color: var(--text);
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--s2); }
+
+    .member-info { display: flex; align-items: center; gap: 12px; }
+    .member-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: grid; place-items: center;
+      font-size: .75rem; font-weight: 700; color: #fff; flex-shrink: 0;
+    }
+    .member-name { font-weight: 600; font-size: .88rem; }
+    .member-email { font-size: .72rem; color: var(--dim); margin-top: 1px; }
+
+    .prog-cell { min-width: 140px; }
+    .prog-wrap { }
+    .prog-label { display: flex; justify-content: space-between; font-size: .68rem; color: var(--dim); margin-bottom: 4px; }
+    .prog-bar { height: 4px; background: var(--s3); border-radius: 4px; overflow: hidden; }
+    .prog-fill { height: 4px; border-radius: 4px; transition: width .5s ease; }
+    .prog-fill.green { background: var(--green); }
+    .prog-fill.amber { background: var(--amber); }
+    .prog-fill.red   { background: var(--red); }
+
+    .td-actions { display: flex; gap: 6px; justify-content: flex-end; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.7);
+      backdrop-filter: blur(6px); z-index: 500;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity .25s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--s2); border: 1px solid var(--border);
+      border-radius: 16px; padding: 28px;
+      width: 440px; max-width: 95vw;
+      transform: scale(.95) translateY(10px); transition: transform .25s;
+    }
+    .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+    .modal-title {
+      font-family: 'Fraunces', serif; font-size: 1.2rem; font-weight: 700;
+      margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-close { background: none; border: none; color: var(--dim); font-size: 1.2rem; }
+    .modal-close:hover { color: var(--text); }
+    .fg { margin-bottom: 14px; }
+    .fg label {
+      display: block; font-size: .68rem; color: var(--dim);
+      text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; margin-bottom: 6px;
+    }
+    .fg input, .fg select {
+      width: 100%; background: var(--s3); border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 12px; color: var(--text);
+      font-family: 'Instrument Sans', sans-serif; font-size: .85rem; outline: none;
+      transition: border-color .2s;
+    }
+    .fg input:focus, .fg select:focus { border-color: var(--accent); }
+    .fg select option { background: var(--s2); }
+    .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+
+    /* ── STATS ── */
+    .members-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 14px; margin-bottom: 22px;
+    }
+
+    /* ── TOAST ── */
+    .toasts { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+    .toast {
+      background: var(--s2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px 16px;
+      font-size: .82rem; color: var(--text);
+      animation: toastIn .25s ease; min-width: 230px;
+    }
+    .toast.ok  { border-color: rgba(52,211,153,.4); }
+    .toast.err { border-color: rgba(248,113,113,.4); }
+    @keyframes toastIn { from { transform: translateX(20px); opacity:0; } to { transform: none; opacity:1; } }
+
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--dim); }
+    .empty-state .ei { font-size: 3rem; margin-bottom: 12px; opacity: .3; }
+  </style>
+</head>
+<body style="visibility:hidden">
+
+<div class="cursor" id="cursor"></div>
+<div class="toasts" id="toasts"></div>
+
+<!-- ════════ SIDEBAR ════════ -->
+<aside class="sidebar">
+  <a href="index.html" class="sb-logo">
+    <div class="sb-logo-icon">📚</div>
+    <div class="sb-logo-name">BiblioTech</div>
+  </a>
+  <div class="sb-role-badge role-admin">⚙️ Administrateur</div>
+  <nav class="sb-nav">
+    <div class="sb-section">Principal</div>
+    <a href="dashboard-admin.html" class="sb-link"><span class="si">🏠</span> Tableau de bord</a>
+    <a href="books.html" class="sb-link"><span class="si">📖</span> Livres</a>
+    <a href="members.html" class="sb-link active"><span class="si">👥</span> Membres</a>
+    <a href="borrowings.html" class="sb-link"><span class="si">🔄</span> Emprunts</a>
+    <div class="sb-section">Catalogue</div>
+    <a href="authors.html" class="sb-link"><span class="si">✍️</span> Auteurs</a>
+  </nav>
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar" id="user-avatar">--</div>
+      <div>
+        <div class="sb-user-name" id="user-name">Chargement...</div>
+        <div class="sb-user-role" id="user-email">—</div>
+      </div>
+    </div>
+    <button class="sb-logout" onclick="handleLogout()">🚪 Déconnexion</button>
+  </div>
+</aside>
+
+<!-- ════════ MAIN ════════ -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">Gestion des membres</div>
+    <div class="topbar-right">
+      <span class="topbar-date" id="today-date"></span>
+      <button class="btn btn-primary" onclick="openModal()">➕ Ajouter un membre</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- STATS -->
+    <div class="members-stats">
+      <div class="stat-card sc-blue">
+        <div class="sc-top"><span class="sc-label">Total membres</span><span class="sc-icon">👥</span></div>
+        <div class="sc-val" id="stat-total">—</div>
+        <div class="sc-sub">inscrits</div>
+      </div>
+      <div class="stat-card sc-green">
+        <div class="sc-top"><span class="sc-label">Étudiants</span><span class="sc-icon">🎓</span></div>
+        <div class="sc-val" id="stat-students">—</div>
+        <div class="sc-sub">max 3 livres</div>
+      </div>
+      <div class="stat-card sc-accent">
+        <div class="sc-top"><span class="sc-label">Enseignants</span><span class="sc-icon">🏫</span></div>
+        <div class="sc-val" id="stat-teachers">—</div>
+        <div class="sc-sub">max 10 livres</div>
+      </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search-input" placeholder="Rechercher par nom ou email...">
+      </div>
+      <div class="filter-tabs">
+        <button class="filter-tab active" onclick="setFilter('all', this)">Tous</button>
+        <button class="filter-tab" onclick="setFilter('student', this)">Étudiants</button>
+        <button class="filter-tab" onclick="setFilter('teacher', this)">Enseignants</button>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Membre</th>
+            <th>Rôle</th>
+            <th>Emprunts</th>
+            <th class="prog-cell">Limite</th>
+            <th style="text-align:right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="members-tbody">
+          <!-- rempli par JS -->
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════ MODAL AJOUTER / MODIFIER ════════ -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-title">
+      <span id="modal-title-text">Ajouter un membre</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="fg">
+        <label>Prénom</label>
+        <input type="text" id="input-first" placeholder="Marie">
+      </div>
+      <div class="fg">
+        <label>Nom</label>
+        <input type="text" id="input-last" placeholder="Dupont">
+      </div>
+    </div>
+    <div class="fg">
+      <label>Email</label>
+      <input type="email" id="input-email" placeholder="marie.dupont@email.com">
+    </div>
+    <div class="fg">
+      <label>Rôle</label>
+      <select id="input-role">
+        <option value="student">🎓 Étudiant (max 3 livres)</option>
+        <option value="teacher">🏫 Enseignant (max 10 livres)</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Annuler</button>
+      <button class="btn btn-primary" onclick="saveMember()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ MODAL SUPPRESSION ════════ -->
+<div class="modal-overlay" id="modal-delete" onclick="handleDeleteOverlayClick(event)">
+  <div class="modal" style="width:360px;">
+    <div class="modal-title">
+      <span>Supprimer ce membre ?</span>
+      <button class="modal-close" onclick="closeDeleteModal()">✕</button>
+    </div>
+    <p style="color:var(--dim);font-size:.85rem;margin-bottom:20px;">
+      Cette action supprimera définitivement le membre et tout son historique d'emprunts.
+    </p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeDeleteModal()">Annuler</button>
+      <button class="btn btn-primary" style="background:var(--red);" onclick="confirmDelete()">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = 'https://tpyjpobheliuqkkriuod.supabase.co'
+  const SUPABASE_KEY = 'sb_publishable_wCTVTGyYstnDSLmJh-lFjA_ORruAhnm'
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+
+  let allMembers    = []
+  let editingId     = null
+  let deletingId    = null
+  let currentFilter = 'all'
+  let searchQuery   = ''
+
+  const AVATAR_COLORS = ['#c84b2f','#60a5fa','#34d399','#fbbf24','#a78bfa','#f87171','#e8693a']
+
+  async function handleLogout() {
+    await sb.auth.signOut()
+    window.location.href = 'auth.html'
+  }
+
+  // ── INIT ──
+  async function init() {
+    const { data: { session } } = await sb.auth.getSession()
+    if (!session) { window.location.href = 'auth.html'; return }
+
+    const user = session.user
+    const role = user.user_metadata?.role || 'student'
+
+    // membres.html = admin only
+    if (role !== 'admin') {
+      window.location.href = role === 'teacher' ? 'dashboard-teacher.html' : 'dashboard-student.html'
+      return
+    }
+
+    const fullName = (user.user_metadata?.full_name || user.email.split('@')[0]).trim()
+    const initials = fullName.split(' ').filter(Boolean).map(n => n[0]).join('').toUpperCase().slice(0,2)
+    document.getElementById('user-name').textContent   = fullName
+    document.getElementById('user-email').textContent  = user.email
+    document.getElementById('user-avatar').textContent = initials
+    document.getElementById('today-date').textContent  =
+      new Date().toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' })
+
+    loadMembers()
+    document.body.style.visibility = 'visible'
+  }
+
+  // ── DONNÉES MOCKÉES ──
+  function loadMembers() {
+    allMembers = [
+      { id: 1, firstName: 'Sophie',  lastName: 'Martin',  email: 'sophie.martin@edu.fr',    role: 'student', borrowed: 3 },
+      { id: 2, firstName: 'Thomas',  lastName: 'Bernard', email: 'thomas.bernard@edu.fr',   role: 'student', borrowed: 2 },
+      { id: 3, firstName: 'Léa',     lastName: 'Moreau',  email: 'lea.moreau@edu.fr',        role: 'student', borrowed: 0 },
+      { id: 4, firstName: 'Hugo',    lastName: 'Petit',   email: 'hugo.petit@edu.fr',        role: 'student', borrowed: 1 },
+      { id: 5, firstName: 'Claire',  lastName: 'Dubois',  email: 'claire.dubois@lycee.fr',   role: 'teacher', borrowed: 1 },
+      { id: 6, firstName: 'Marc',    lastName: 'Lefèvre', email: 'marc.lefevre@lycee.fr',    role: 'teacher', borrowed: 4 },
+      { id: 7, firstName: 'Julie',   lastName: 'Simon',   email: 'julie.simon@edu.fr',       role: 'student', borrowed: 0 },
+      { id: 8, firstName: 'Antoine', lastName: 'Garnier', email: 'antoine.garnier@lycee.fr', role: 'teacher', borrowed: 7 },
+    ]
+    updateStats()
+    renderMembers()
+  }
+
+  // ── STATS ──
+  function updateStats() {
+    const students = allMembers.filter(m => m.role === 'student')
+    const teachers = allMembers.filter(m => m.role === 'teacher')
+    document.getElementById('stat-total').textContent    = allMembers.length
+    document.getElementById('stat-students').textContent = students.length
+    document.getElementById('stat-teachers').textContent = teachers.length
+  }
+
+  // ── RENDER ──
+  function renderMembers() {
+    const tbody = document.getElementById('members-tbody')
+    let filtered = allMembers
+
+    if (currentFilter === 'student') filtered = filtered.filter(m => m.role === 'student')
+    if (currentFilter === 'teacher') filtered = filtered.filter(m => m.role === 'teacher')
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase()
+      filtered = filtered.filter(m =>
+        `${m.firstName} ${m.lastName}`.toLowerCase().includes(q) ||
+        m.email.toLowerCase().includes(q)
+      )
+    }
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `
+        <tr><td colspan="5">
+          <div class="empty-state">
+            <div class="ei">👥</div>
+            <p>Aucun membre trouvé</p>
+          </div>
+        </td></tr>`
+      return
+    }
+
+    tbody.innerHTML = filtered.map((m, i) => {
+      const max     = m.role === 'student' ? 3 : 10
+      const pct     = Math.round((m.borrowed / max) * 100)
+      const color   = pct >= 100 ? 'red' : pct >= 60 ? 'amber' : 'green'
+      const initials = `${m.firstName[0]}${m.lastName[0]}`.toUpperCase()
+      const avatarColor = AVATAR_COLORS[m.id % AVATAR_COLORS.length]
+      return `
+        <tr>
+          <td>
+            <div class="member-info">
+              <div class="member-avatar" style="background:${avatarColor}">${initials}</div>
+              <div>
+                <div class="member-name">${m.firstName} ${m.lastName}</div>
+                <div class="member-email">${m.email}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="badge ${m.role === 'student' ? 'b-blue' : 'b-green'}">
+              ${m.role === 'student' ? '🎓 Étudiant' : '🏫 Enseignant'}
+            </span>
+          </td>
+          <td>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:.85rem;">${m.borrowed}</span>
+            <span style="color:var(--dim);font-size:.75rem;"> / ${max}</span>
+          </td>
+          <td class="prog-cell">
+            <div class="prog-wrap">
+              <div class="prog-label"><span>${m.borrowed}/${max}</span><span>${pct}%</span></div>
+              <div class="prog-bar"><div class="prog-fill ${color}" style="width:${pct}%"></div></div>
+            </div>
+          </td>
+          <td>
+            <div class="td-actions">
+              <button class="btn btn-ghost btn-sm" onclick="editMember(${m.id})">✏️ Modifier</button>
+              <button class="btn btn-ghost btn-sm" style="border-color:transparent;" onclick="openDeleteModal(${m.id})">🗑️</button>
+            </div>
+          </td>
+        </tr>`
+    }).join('')
+  }
+
+  // ── FILTRE + RECHERCHE ──
+  function setFilter(filter, btn) {
+    currentFilter = filter
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'))
+    btn.classList.add('active')
+    renderMembers()
+  }
+
+  document.getElementById('search-input').addEventListener('input', e => {
+    searchQuery = e.target.value
+    renderMembers()
+  })
+
+  // ── MODAL AJOUTER/MODIFIER ──
+  function openModal(member = null) {
+    editingId = member ? member.id : null
+    document.getElementById('modal-title-text').textContent = member ? 'Modifier le membre' : 'Ajouter un membre'
+    document.getElementById('input-first').value = member ? member.firstName : ''
+    document.getElementById('input-last').value  = member ? member.lastName  : ''
+    document.getElementById('input-email').value = member ? member.email     : ''
+    document.getElementById('input-role').value  = member ? member.role      : 'student'
+    document.getElementById('modal-overlay').classList.add('open')
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open')
+    editingId = null
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('modal-overlay')) closeModal()
+  }
+
+  function editMember(id) {
+    const m = allMembers.find(m => m.id === id)
+    if (m) openModal(m)
+  }
+
+  function saveMember() {
+    const firstName = document.getElementById('input-first').value.trim()
+    const lastName  = document.getElementById('input-last').value.trim()
+    const email     = document.getElementById('input-email').value.trim()
+    const role      = document.getElementById('input-role').value
+
+    if (!firstName || !lastName || !email) { toast('❌ Tous les champs sont requis.', 'err'); return }
+
+    if (editingId) {
+      const idx = allMembers.findIndex(m => m.id === editingId)
+      if (idx !== -1) allMembers[idx] = { ...allMembers[idx], firstName, lastName, email, role }
+      toast('✅ Membre modifié avec succès.', 'ok')
+    } else {
+      const newId = Math.max(...allMembers.map(m => m.id), 0) + 1
+      allMembers.push({ id: newId, firstName, lastName, email, role, borrowed: 0 })
+      toast('✅ Membre ajouté avec succès.', 'ok')
+    }
+
+    closeModal()
+    updateStats()
+    renderMembers()
+  }
+
+  // ── MODAL SUPPRESSION ──
+  function openDeleteModal(id) {
+    deletingId = id
+    document.getElementById('modal-delete').classList.add('open')
+  }
+
+  function closeDeleteModal() {
+    document.getElementById('modal-delete').classList.remove('open')
+    deletingId = null
+  }
+
+  function handleDeleteOverlayClick(e) {
+    if (e.target === document.getElementById('modal-delete')) closeDeleteModal()
+  }
+
+  function confirmDelete() {
+    allMembers = allMembers.filter(m => m.id !== deletingId)
+    closeDeleteModal()
+    updateStats()
+    renderMembers()
+    toast('🗑️ Membre supprimé.', 'ok')
+  }
+
+  // ── TOAST ──
+  function toast(msg, type = 'info') {
+    const c = document.getElementById('toasts')
+    const t = document.createElement('div')
+    t.className = `toast ${type}`
+    t.textContent = msg
+    c.appendChild(t)
+    setTimeout(() => {
+      t.style.opacity = '0'; t.style.transform = 'translateX(20px)'; t.style.transition = '.3s'
+      setTimeout(() => t.remove(), 300)
+    }, 3500)
+  }
+
+  // ── CURSOR ──
+  const cursor = document.getElementById('cursor')
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px'
+    cursor.style.top  = e.clientY + 'px'
+  })
+  document.addEventListener('mouseover', e => {
+    if (e.target.matches('a, button, tr')) cursor.classList.add('big')
+    else cursor.classList.remove('big')
+  })
+
+  init()
+</script>
+</body>
+</html>
